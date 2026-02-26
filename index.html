@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Future Potential Calculator – Pinterest</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;transition:background 0.3s,color 0.3s}
+body.dark{--bg:#0d0d0d;--surface:#161616;--card:#1e1e1e;--border:#2a2a2a;--input-bg:#252525;--input-border:#333;--text:#f0f0f0;--text-2:#aaa;--text-3:#666;--zone-safe:rgba(0,180,80,0.08);--zone-warn:rgba(255,193,7,0.08);--zone-hot:rgba(230,0,35,0.1)}
+body.light{--bg:#f5f5f5;--surface:#fff;--card:#fff;--border:#e5e5e5;--input-bg:#fafafa;--input-border:#ddd;--text:#1a1a1a;--text-2:#555;--text-3:#999;--zone-safe:rgba(0,180,80,0.07);--zone-warn:rgba(255,193,7,0.1);--zone-hot:rgba(230,0,35,0.08)}
+:root{--red:#E60023;--red-dark:#ad081b;--orange:#ff9800;--green:#43a047;--green-light:#66bb6a;--blue:#42a5f5}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+.header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.header-left h1{font-size:1.9rem;font-weight:800;color:var(--text);line-height:1.1}
+.header-left h1 span{color:var(--red)}
+.header-left p{color:var(--text-2);font-size:0.9rem;margin-top:0.3rem}
+.header-right{display:flex;align-items:center;gap:0.75rem}
+.theme-btn{padding:0.5rem 1rem;border:2px solid var(--border);border-radius:9999px;background:var(--card);color:var(--text);cursor:pointer;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:0.35rem}
+.p-logo{width:36px;height:36px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* TABS */
+.tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;background:var(--card);padding:0.5rem;border-radius:1rem;border:1px solid var(--border);flex-wrap:wrap}
+.tab{flex:1;min-width:160px;padding:0.9rem 0.5rem;border:none;border-radius:0.65rem;background:var(--input-bg);color:var(--text-2);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.2s;text-align:center}
+.tab.active{background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;box-shadow:0 4px 16px rgba(230,0,35,0.35)}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:1.5rem;align-items:start}
+@media(max-width:820px){.main-grid{grid-template-columns:1fr}}
+
+/* PANELS */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem}
+.panel-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem}
+.panel-title .icon{width:28px;height:28px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:0.75rem}
+
+/* FORM */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:0.78rem;font-weight:600;color:var(--text-2);margin-bottom:0.35rem}
+.field input{width:100%;padding:0.6rem 0.875rem;background:var(--input-bg);border:2px solid var(--input-border);border-radius:0.5rem;color:var(--text);font-size:0.95rem;transition:border-color 0.2s}
+.field input:focus{outline:none;border-color:var(--red)}
+.field .hint{font-size:0.68rem;color:var(--text-3);margin-top:0.2rem}
+.field .derived{font-size:0.72rem;font-weight:600;margin-top:0.25rem;color:var(--red)}
+
+/* ADVANCED */
+.adv-toggle{width:100%;background:none;border:none;color:var(--text-2);font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0 0}
+.adv-body{margin-top:0.75rem;padding:1rem;background:var(--input-bg);border-radius:0.75rem;border:1px solid var(--border);display:flex;flex-direction:column;gap:0.75rem}
+.adv-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem}
+@media(max-width:500px){.adv-row{grid-template-columns:1fr}}
+
+/* RESULTS */
+.results-stack{display:flex;flex-direction:column;gap:1rem}
+.result-card{border-radius:1rem;padding:1.25rem;border:2px solid transparent}
+.result-card.actual{background:linear-gradient(135deg,rgba(255,152,0,0.12),rgba(255,152,0,0.06));border-color:rgba(255,152,0,0.35)}
+.result-card.potential{background:linear-gradient(135deg,rgba(67,160,71,0.12),rgba(67,160,71,0.06));border-color:rgba(67,160,71,0.35)}
+.result-card.gap{background:linear-gradient(135deg,rgba(230,0,35,0.1),rgba(230,0,35,0.05));border-color:rgba(230,0,35,0.3)}
+.rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.rc-title{font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
+.rc-title.actual{color:var(--orange)}
+.rc-title.potential{color:var(--green-light)}
+.rc-title.gap{color:var(--red)}
+.rc-badge{font-size:0.7rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px}
+.rc-badge.actual{background:rgba(255,152,0,0.2);color:var(--orange)}
+.rc-badge.potential{background:rgba(67,160,71,0.2);color:var(--green-light)}
+.rc-badge.gap{background:rgba(230,0,35,0.15);color:var(--red)}
+.rc-main{font-size:2rem;font-weight:900;line-height:1;margin-bottom:0.25rem}
+.rc-main.actual{color:var(--orange)}
+.rc-main.potential{color:var(--green-light)}
+.rc-main.gap{color:var(--red)}
+.rc-sub{font-size:0.78rem;color:var(--text-2);margin-bottom:0.875rem}
+.rc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.metric-item{background:var(--input-bg);border:1px solid var(--border);border-radius:0.5rem;padding:0.5rem 0.65rem}
+.metric-item .ml{font-size:0.65rem;color:var(--text-3);font-weight:600;text-transform:uppercase;margin-bottom:0.2rem}
+.metric-item .mv{font-size:0.9rem;font-weight:700;color:var(--text)}
+
+/* PLACEHOLDER */
+.placeholder{text-align:center;padding:2rem 1rem;color:var(--text-3)}
+.placeholder .pi{font-size:2.5rem;margin-bottom:0.75rem}
+.placeholder p{font-size:0.85rem;line-height:1.5}
+
+/* CHART SECTION */
+.chart-section{margin-top:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem}
+.chart-section-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:1.5rem;text-align:center}
+.charts-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:2rem;align-items:center}
+@media(max-width:720px){.charts-grid{grid-template-columns:1fr}}
+
+/* PENETRATION BARS */
+.pen-bars{display:flex;justify-content:center;align-items:flex-end;gap:1.5rem}
+.pen-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:0.75rem}
+.pen-bar-col{width:80px;height:260px;border-radius:0.875rem;overflow:hidden;border:3px solid transparent;display:flex;flex-direction:column;position:relative}
+.pen-bar-col.actual{border-color:var(--orange);box-shadow:0 6px 24px rgba(255,152,0,0.3)}
+.pen-bar-col.potential{border-color:var(--green-light);box-shadow:0 6px 24px rgba(67,160,71,0.3)}
+.bar-empty{background:var(--input-bg);display:flex;align-items:center;justify-content:center}
+.bar-empty span{font-size:0.7rem;color:var(--text-3);font-weight:600;writing-mode:vertical-rl;transform:rotate(180deg)}
+.bar-filled{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.bar-filled .pct{font-size:1.2rem;font-weight:900;color:#fff}
+.bar-filled .lbl{font-size:0.55rem;font-weight:700;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.04em;text-align:center}
+.pen-bar-name{font-size:0.8rem;font-weight:700;text-align:center}
+.pen-bar-budget{font-size:1rem;font-weight:900;text-align:center;color:var(--text)}
+.pen-arrow{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding-bottom:2.5rem}
+.pen-arrow .arr{font-size:1.75rem;color:var(--green-light)}
+.pen-arrow .uplift{background:rgba(67,160,71,0.15);border:1px solid rgba(67,160,71,0.4);border-radius:9999px;padding:0.25rem 0.6rem;font-size:0.7rem;font-weight:700;color:var(--green-light)}
+
+/* CPM CURVE CHART */
+.curve-wrap{position:relative;width:100%}
+.curve-wrap svg{width:100%;display:block}
+.curve-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;justify-content:center}
+.cl-item{display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;color:var(--text-2)}
+.cl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-top:1.5rem}
+@media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-box{background:var(--input-bg);border:2px solid var(--border);border-radius:0.75rem;padding:1rem;text-align:center}
+.stat-box .sl{font-size:0.65rem;color:var(--text-3);font-weight:700;text-transform:uppercase;margin-bottom:0.35rem}
+.stat-box .sv{font-size:1.35rem;font-weight:900}
+
+/* RECOMMENDATION */
+.rec-section{margin-top:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem}
+.rec-section-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+.rec-body{color:var(--text-2);font-size:0.88rem;line-height:1.8}
+.rec-body p{margin-bottom:0.75rem}
+.rec-body strong{color:var(--text);font-weight:700}
+.rec-highlight{background:linear-gradient(135deg,rgba(230,0,35,0.08),rgba(230,0,35,0.04));border-left:3px solid var(--red);padding:0.875rem 1rem;border-radius:0 0.5rem 0.5rem 0;margin:1rem 0;font-size:0.85rem;line-height:1.6;color:var(--text-2)}
+.copy-row{display:flex;justify-content:flex-end;margin-top:0.75rem}
+.copy-btn{padding:0.4rem 0.875rem;background:var(--input-bg);border:1px solid var(--border);border-radius:0.5rem;cursor:pointer;font-size:0.75rem;color:var(--text-2);font-weight:600}
+.copy-ok{color:var(--green-light);font-size:0.78rem;font-weight:600;padding:0.4rem 0.875rem}
+
+/* SAFE ZONE BADGE */
+.safe-badge{display:inline-flex;align-items:center;gap:0.35rem;padding:0.3rem 0.75rem;border-radius:9999px;font-size:0.75rem;font-weight:700}
+.safe-badge.safe{background:rgba(67,160,71,0.15);color:var(--green-light);border:1px solid rgba(67,160,71,0.4)}
+.safe-badge.warn{background:rgba(255,193,7,0.15);color:#ffc107;border:1px solid rgba(255,193,7,0.4)}
+.safe-badge.danger{background:rgba(230,0,35,0.12);color:var(--red);border:1px solid rgba(230,0,35,0.35)}
+.hidden{display:none!important}
+</style>
+</head>
+<body class="dark">
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left" style="display:flex;align-items:center;gap:0.875rem">
+      <div class="p-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Future <span>Potential</span> Calculator</h1>
+        <p>Post-campaign analysis · Scale potential · Future recommendations</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="theme-btn" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span><span id="theme-txt">Dark</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="awareness" onclick="switchTab('awareness')">📢 Awareness (CPM)</button>
+    <button class="tab" data-tab="video" onclick="switchTab('video')">🎬 Video Completion (CPCV95)</button>
+    <button class="tab" data-tab="consideration" onclick="switchTab('consideration')">🖱️ Consideration (CPC)</button>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- INPUTS -->
+    <div class="panel">
+      <div class="panel-title">
+        <div class="icon" id="panel-icon">📋</div>
+        <span id="panel-title-text">Campaign Parameters</span>
+      </div>
+
+      <div class="field">
+        <label>🎯 Potential Audience Size</label>
+        <input type="text" id="audienceSize" placeholder="e.g., 1,200,000" oninput="handleNum(this);calculate()">
+        <div class="hint">Total addressable audience on Pinterest</div>
+      </div>
+
+      <div class="field">
+        <label id="m1-label">💰 Base CPM (€)</label>
+        <input type="text" id="metric1" placeholder="e.g., 14.50" oninput="handleDec(this);calculate()">
+        <div class="hint" id="m1-hint">Cost per 1,000 impressions</div>
+      </div>
+
+      <div class="field hidden" id="m2-field">
+        <label id="m2-label">📊 VTR95% (%)</label>
+        <input type="text" id="metric2" placeholder="e.g., 60" oninput="handleDec(this);calculate()">
+        <div class="hint" id="m2-hint">View-through rate at 95%</div>
+        <div class="derived hidden" id="derived-cpm"></div>
+      </div>
+
+      <div class="field">
+        <label>💵 Budget Used (€)</label>
+        <input type="text" id="budgetUsed" placeholder="e.g., 45,000" oninput="handleNum(this);calculate()">
+        <div class="hint">Total budget spent on this campaign</div>
+      </div>
+
+      <div class="field">
+        <label>📅 Campaign Duration (weeks)</label>
+        <input type="text" id="weeks" placeholder="e.g., 6" oninput="handleDec(this);calculate()">
+      </div>
+
+      <div class="field">
+        <label>🔄 Average Weekly Frequency</label>
+        <input type="text" id="frequency" placeholder="e.g., 2.5" oninput="handleDec(this);calculate()">
+        <div class="hint">Avg. times per week each user was served an ad</div>
+      </div>
+
+      <div class="field">
+        <label>📊 Penetration Reached (%)</label>
+        <input type="text" id="penReached" placeholder="e.g., 28" oninput="handleDec(this);calculate()">
+        <div class="hint">% of potential audience reached by this campaign</div>
+        <div class="derived hidden" id="reached-users"></div>
+      </div>
+
+      <div class="field">
+        <label>🚀 Penetration Potential (%)</label>
+        <input type="text" id="penPotential" placeholder="e.g., 60" oninput="handleDec(this);calculate()">
+        <div class="hint">Safe target % for future campaign recommendation</div>
+        <div class="derived hidden" id="potential-users"></div>
+        <div class="derived hidden" id="potential-cap"></div>
+      </div>
+
+      <!-- ADVANCED -->
+      <div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem">
+        <button class="adv-toggle" onclick="toggleAdv()">
+          <span>⚙️ Advanced Settings</span>
+          <span id="adv-arrow">▶ show</span>
+        </button>
+        <div class="adv-body hidden" id="adv-body">
+          <div style="font-size:0.75rem;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em">CPM Inflation Parameters</div>
+          <div class="adv-row">
+            <div class="field" style="margin:0">
+              <label id="adv-thr-lbl">Threshold (%)</label>
+              <input type="text" id="adv-threshold" placeholder="30" oninput="handleDec(this);calculate()">
+              <div class="hint">Inflation starts here</div>
+            </div>
+            <div class="field" style="margin:0">
+              <label id="adv-infl-lbl">Inflation Rate (%)</label>
+              <input type="text" id="adv-inflation" placeholder="50" oninput="handleDec(this);calculate()">
+              <div class="hint" id="adv-infl-hint">At inflation point</div>
+            </div>
+            <div class="field" style="margin:0">
+              <label>Max Reachable (%)</label>
+              <input type="text" id="adv-maxreach" placeholder="85" oninput="handleDec(this);calculate()">
+              <div class="hint">Platform ceiling</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-stack">
+      <!-- PLACEHOLDER -->
+      <div class="panel placeholder" id="placeholder">
+        <div class="pi">📈</div>
+        <p>Enter your campaign data on the left to generate a <strong>Future Potential Report</strong>.<br><br>You'll see what your campaign achieved, what it could have scaled to safely, and a budget recommendation for future flights.</p>
+      </div>
+
+      <!-- RESULT CARDS (hidden until calculated) -->
+      <div class="result-card actual hidden" id="card-actual">
+        <div class="rc-header">
+          <span class="rc-title actual">✅ Actual Campaign</span>
+          <span class="rc-badge actual">Delivered</span>
+        </div>
+        <div class="rc-main actual" id="ra-pen">—</div>
+        <div class="rc-sub" id="ra-sub">penetration reached</div>
+        <div class="rc-metrics">
+          <div class="metric-item"><div class="ml">Budget Used</div><div class="mv" id="ra-budget">—</div></div>
+          <div class="metric-item"><div class="ml">Users Reached</div><div class="mv" id="ra-users">—</div></div>
+          <div class="metric-item"><div class="ml" id="ra-imp-lbl">Impressions</div><div class="mv" id="ra-impr">—</div></div>
+          <div class="metric-item"><div class="ml" id="ra-eng-lbl">Engagements</div><div class="mv" id="ra-eng">—</div></div>
+        </div>
+      </div>
+
+      <div class="result-card potential hidden" id="card-potential">
+        <div class="rc-header">
+          <span class="rc-title potential">🚀 Potential Campaign</span>
+          <span class="rc-badge potential" id="safe-zone-badge">Safe Zone</span>
+        </div>
+        <div class="rc-main potential" id="rp-pen">—</div>
+        <div class="rc-sub" id="rp-sub">achievable penetration</div>
+        <div class="rc-metrics">
+          <div class="metric-item"><div class="ml">Budget Needed</div><div class="mv" id="rp-budget">—</div></div>
+          <div class="metric-item"><div class="ml">Users Reached</div><div class="mv" id="rp-users">—</div></div>
+          <div class="metric-item"><div class="ml" id="rp-imp-lbl">Impressions</div><div class="mv" id="rp-impr">—</div></div>
+          <div class="metric-item"><div class="ml" id="rp-eng-lbl">Engagements</div><div class="mv" id="rp-eng">—</div></div>
+        </div>
+      </div>
+
+      <div class="result-card gap hidden" id="card-gap">
+        <div class="rc-header">
+          <span class="rc-title gap">💡 Scaling Opportunity</span>
+          <span class="rc-badge gap">Missed</span>
+        </div>
+        <div class="rc-main gap" id="rg-budget">—</div>
+        <div class="rc-sub">additional budget would have unlocked</div>
+        <div class="rc-metrics">
+          <div class="metric-item"><div class="ml">Add. Users</div><div class="mv" id="rg-users">—</div></div>
+          <div class="metric-item"><div class="ml">Penetration Uplift</div><div class="mv" id="rg-pen">—</div></div>
+          <div class="metric-item"><div class="ml" id="rg-eng-lbl">Add. Engagements</div><div class="mv" id="rg-eng">—</div></div>
+          <div class="metric-item"><div class="ml">Budget Multiplier</div><div class="mv" id="rg-mult">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART SECTION -->
+  <div class="chart-section hidden" id="chart-section">
+    <div class="chart-section-title" id="chart-section-title">📊 Campaign Scale Analysis</div>
+
+    <div class="charts-grid">
+      <!-- PENETRATION BARS -->
+      <div>
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.05em">Audience Penetration</div>
+        <div class="pen-bars" id="pen-bars-container">
+          <div class="pen-bar-wrap">
+            <div class="pen-bar-col actual" id="bar-actual">
+              <div class="bar-empty" id="bar-actual-empty" style="flex:1"><span id="bar-actual-empty-txt"></span></div>
+              <div class="bar-filled" id="bar-actual-filled" style="background:linear-gradient(180deg,#ffa726,#f57c00,#e65100)">
+                <div class="pct" id="bar-actual-pct">0%</div>
+                <div class="lbl">Achieved</div>
+              </div>
+            </div>
+            <div class="pen-bar-name" style="color:var(--orange)">Actual</div>
+            <div class="pen-bar-budget" id="bar-actual-budget">€0</div>
+          </div>
+
+          <div class="pen-arrow">
+            <div class="arr">→</div>
+            <div class="uplift" id="bar-uplift">+0%</div>
+          </div>
+
+          <div class="pen-bar-wrap">
+            <div class="pen-bar-col potential" id="bar-potential">
+              <div class="bar-empty" id="bar-pot-empty" style="flex:1"><span id="bar-pot-empty-txt"></span></div>
+              <div class="bar-filled" id="bar-pot-filled" style="background:linear-gradient(180deg,#81c784,#43a047,#2e7d32)">
+                <div class="pct" id="bar-pot-pct">0%</div>
+                <div class="lbl">Potential</div>
+              </div>
+            </div>
+            <div class="pen-bar-name" style="color:var(--green-light)">Potential</div>
+            <div class="pen-bar-budget" id="bar-pot-budget">€0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CPM CURVE CHART -->
+      <div class="curve-wrap">
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em" id="curve-title">CPM Scaling Curve</div>
+        <svg id="cpm-chart" viewBox="0 0 460 240" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="curve-legend">
+          <div class="cl-item"><div class="cl-dot" style="background:rgba(67,160,71,0.5)"></div>Safe zone</div>
+          <div class="cl-item"><div class="cl-dot" style="background:rgba(255,193,7,0.5)"></div>Inflation zone</div>
+          <div class="cl-item"><div class="cl-dot" style="background:rgba(230,0,35,0.4)"></div>High inflation</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--orange);border-radius:50%"></div>Actual</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--green-light);border-radius:50%"></div>Potential</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-box">
+        <div class="sl">Penetration Gain</div>
+        <div class="sv" id="stat-pen" style="color:var(--green-light)">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="sl" id="stat-eng-lbl">Add. Impressions</div>
+        <div class="sv" id="stat-eng" style="color:var(--blue)">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="sl">Budget Gap</div>
+        <div class="sv" id="stat-gap" style="color:var(--red)">—</div>
+      </div>
+      <div class="stat-box">
+        <div class="sl" id="stat-eff-lbl">Eff. CPM at Target</div>
+        <div class="sv" id="stat-eff" style="color:var(--orange)">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATION -->
+  <div class="rec-section hidden" id="rec-section">
+    <div class="rec-section-title">
+      📋 Future Campaign Recommendation
+      <div style="margin-left:auto;display:flex;align-items:center;gap:0.5rem">
+        <span id="rec-copy-ok" class="copy-ok hidden">✓ Copied!</span>
+        <button class="copy-btn" onclick="copyRec()">📋 Copy Report</button>
+      </div>
+    </div>
+    <div class="rec-body" id="rec-body"></div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let isDark = true;
+let activeTab = 'awareness';
+let showAdv = false;
+let lastResult = null;
+
+const tabData = {
+  awareness:     { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'30', inflation:'50', maxreach:'85' },
+  video:         { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'300', maxreach:'75' },
+  consideration: { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'300', maxreach:'75' }
+};
+
+const tabConfigs = {
+  awareness:     { m1Label:'💰 Base CPM (€)', m1Hint:'Cost per 1,000 impressions', m1Ph:'e.g., 14.50', m2:false, engName:'Impressions', effLabel:'Eff. CPM at Target', inflPt:50 },
+  video:         { m1Label:'🎬 Base CPCV95% (€)', m1Hint:'Cost per completed view at 95%', m1Ph:'e.g., 0.05', m2:true, m2Label:'📊 VTR95% (%)', m2Hint:'View-through rate at 95%', m2Ph:'e.g., 60', engName:'Video Views', effLabel:'Eff. CPCV at Target', inflPt:40 },
+  consideration: { m1Label:'🖱️ Base CPC (€)', m1Hint:'Cost per click', m1Ph:'e.g., 0.45', m2:true, m2Label:'📊 CTR (%)', m2Hint:'Click-through rate', m2Ph:'e.g., 1.2', engName:'Pin Clicks', effLabel:'Eff. CPC at Target', inflPt:40 }
+};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function fNum(n) {
+  if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
+  if (n >= 1e6) return (n/1e6).toFixed(2)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return Math.round(n).toLocaleString('en-US');
+}
+function fEur(n, dec=0) { return '€' + n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }); }
+function fPct(n) { return n.toFixed(1) + '%'; }
+
+function handleNum(el) {
+  const raw = el.value.replace(/,/g,'');
+  if (raw === '' || !isNaN(raw)) {
+    tabData[activeTab][el.id] = raw;
+    el.value = raw ? parseFloat(raw).toLocaleString('en-US') : '';
+  }
+}
+function handleDec(el) {
+  const v = el.value;
+  if (v === '' || /^[0-9]*\.?[0-9]*$/.test(v)) {
+    tabData[activeTab][el.id] = v;
+  } else {
+    el.value = tabData[activeTab][el.id] || '';
+  }
+}
+
+// ─── CALCULATION ENGINE (identical to Upsell Powerhouse) ─────────────────────
+function getEffectiveCPM(pen, baseCPM, inflRate, threshold, isEng) {
+  if (baseCPM <= 0 || pen < threshold) return baseCPM;
+  const a = pen - threshold;
+  const inflPt = isEng ? 40 : 50;
+  if (pen <= inflPt) {
+    return baseCPM * (1 + (a / (inflPt - threshold)) * inflRate / 100);
+  }
+  const s = (pen - inflPt) / 10;
+  if (isEng) {
+    return baseCPM * (1 + inflRate/100 + (Math.pow(1.8, s) - 1) * 1.5);
+  } else {
+    return baseCPM * (1 + inflRate/100 + Math.pow(s, 2) * 0.15);
+  }
+}
+
+function getNaturalFrequency(pen, weeks, threshold) {
+  const base = weeks <= 2 ? 4 : weeks <= 4 ? 3.5 : weeks <= 8 ? 2.5 : weeks <= 12 ? 2 : 1.5;
+  if (pen < threshold) return base;
+  const decay = Math.pow((pen - threshold) / (100 - threshold), 1.5);
+  return base * (1 - decay * 0.6);
+}
+
+function calcBudgetNeeded(startPen, targetPen, freq, aud, weeks, baseCPM, inflRate, threshold, maxReach, isEng) {
+  if (targetPen <= startPen || baseCPM <= 0 || targetPen <= 0) return 0;
+  let total = 0;
+  for (let p = startPen; p < targetPen; p += 0.5) {
+    const eCPM = getEffectiveCPM(p, baseCPM, inflRate, threshold, isEng);
+    const natF = getNaturalFrequency(p, weeks, threshold);
+    const prem = freq > natF ? 1 + (freq / natF - 1) * 0.5 : 1;
+    const incP = (p + 0.5 > targetPen) ? (targetPen - p) : 0.5;
+    const incUsers = aud * incP / 100;
+    total += (incUsers * freq * weeks / 1000) * eCPM * prem;
+  }
+  return total;
+}
+
+// ─── MAIN CALCULATE ───────────────────────────────────────────────────────────
+function calculate() {
+  const cfg  = tabConfigs[activeTab];
+  const isEng = activeTab !== 'awareness';
+  const d    = tabData[activeTab];
+
+  const aud      = parseFloat(d.audienceSize) || 0;
+  const m1       = parseFloat(d.metric1) || 0;
+  const m2       = parseFloat(d.metric2) || 0;
+  const budget   = parseFloat(d.budgetUsed) || 0;
+  const weeks    = parseFloat(d.weeks) || 0;
+  const freq     = parseFloat(d.frequency) || 0;
+  const penA     = parseFloat(d.penReached) || 0;
+  const penP     = parseFloat(d.penPotential) || 0;
+  const thr      = parseFloat(d.threshold) || (isEng ? 20 : 30);
+  const infl     = parseFloat(d.inflation) || (isEng ? 300 : 50);
+  const maxR     = parseFloat(d.maxreach) || (isEng ? 75 : 85);
+
+  const baseCPM = isEng ? (m1 * m2 * 10) : m1;
+  const cappedPot = Math.min(penP, maxR);
+
+  // Derived CPM hint
+  const dcEl = document.getElementById('derived-cpm');
+  if (isEng && baseCPM > 0 && m2 > 0) {
+    dcEl.classList.remove('hidden');
+    dcEl.textContent = '💰 Effective CPM: ' + fEur(baseCPM, 2);
+  } else { dcEl.classList.add('hidden'); }
+
+  // User count hints
+  const ruEl = document.getElementById('reached-users');
+  if (penA > 0 && aud > 0) {
+    ruEl.classList.remove('hidden');
+    ruEl.textContent = '= ' + (aud * penA / 100).toLocaleString('en-US', {maximumFractionDigits:0}) + ' users reached';
+  } else { ruEl.classList.add('hidden'); }
+
+  const puEl = document.getElementById('potential-users');
+  const pcEl = document.getElementById('potential-cap');
+  if (penP > 0 && aud > 0) {
+    puEl.classList.remove('hidden');
+    puEl.textContent = '= ' + (aud * cappedPot / 100).toLocaleString('en-US', {maximumFractionDigits:0}) + ' target users';
+  } else { puEl.classList.add('hidden'); }
+  if (penP > maxR) {
+    pcEl.classList.remove('hidden');
+    pcEl.textContent = '⚠️ Capped at ' + maxR + '% (max reachable)';
+  } else { pcEl.classList.add('hidden'); }
+
+  // Need minimum inputs
+  if (!aud || !m1 || !budget || !weeks || !freq || !penA || !penP) {
+    showPlaceholder();
+    return;
+  }
+
+  // ── ACTUAL CAMPAIGN METRICS ──
+  const actualUsers  = aud * penA / 100;
+  const actualImpr   = actualUsers * freq * weeks;
+  const actualEng    = isEng ? actualImpr * m2 / 100 : actualImpr;
+
+  // ── POTENTIAL CAMPAIGN METRICS ──
+  const potUsers   = aud * cappedPot / 100;
+  const potImpr    = potUsers * freq * weeks;
+  const potEng     = isEng ? potImpr * m2 / 100 : potImpr;
+  const budgetNeeded = calcBudgetNeeded(0, cappedPot, freq, aud, weeks, baseCPM, infl, thr, maxR, isEng);
+  const budgetGap    = Math.max(0, budgetNeeded - budget);
+
+  // ── EFFECTIVE CPM at target ──
+  const eCPMAtTarget = getEffectiveCPM(cappedPot, baseCPM, infl, thr, isEng);
+  const natFAtTarget = getNaturalFrequency(cappedPot, weeks, thr);
+  const premAtTarget = freq > natFAtTarget ? 1 + (freq / natFAtTarget - 1) * 0.5 : 1;
+  const avgEffCPM    = eCPMAtTarget * premAtTarget;
+  const effMetric    = isEng && m2 > 0 ? avgEffCPM / (m2 * 10) : avgEffCPM;
+  const inflPct      = baseCPM > 0 ? (avgEffCPM / baseCPM - 1) * 100 : 0;
+
+  // ── SAFE ZONE DETERMINATION ──
+  let safeZone = 'safe', safeLabel = '✅ Safe Zone';
+  if (cappedPot >= tabConfigs[activeTab].inflPt + 10) { safeZone = 'danger'; safeLabel = '⚠️ High Inflation'; }
+  else if (cappedPot >= thr) { safeZone = 'warn'; safeLabel = '⚡ Inflation Zone'; }
+
+  // Store results
+  lastResult = { aud, m1, m2, budget, weeks, freq, penA, penP: cappedPot, baseCPM, thr, infl, maxR,
+    isEng, cfg, actualUsers, actualImpr, actualEng, potUsers, potImpr, potEng,
+    budgetNeeded, budgetGap, budgetMult: budgetNeeded > 0 ? budgetNeeded/budget : 0,
+    effMetric, inflPct, safeZone, safeLabel,
+    addUsers: potUsers - actualUsers, penGap: cappedPot - penA,
+    addEng: potEng - actualEng, addImpr: potImpr - actualImpr };
+
+  updateCards(lastResult);
+  updateChart(lastResult);
+  updateRec(lastResult);
+  hidePlaceholder();
+}
+
+// ─── UI UPDATE ────────────────────────────────────────────────────────────────
+function showPlaceholder() {
+  document.getElementById('placeholder').classList.remove('hidden');
+  ['card-actual','card-potential','card-gap','chart-section','rec-section'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+}
+function hidePlaceholder() {
+  document.getElementById('placeholder').classList.add('hidden');
+  ['card-actual','card-potential','card-gap','chart-section','rec-section'].forEach(id => {
+    document.getElementById(id).classList.remove('hidden');
+  });
+}
+
+function updateCards(r) {
+  const engL = r.cfg.engName;
+
+  // Actual
+  document.getElementById('ra-pen').textContent     = fPct(r.penA);
+  document.getElementById('ra-sub').textContent     = `of ${fNum(r.aud)} audience reached`;
+  document.getElementById('ra-budget').textContent  = fEur(r.budget);
+  document.getElementById('ra-users').textContent   = fNum(r.actualUsers);
+  document.getElementById('ra-imp-lbl').textContent = r.isEng ? 'Impressions' : 'Impressions';
+  document.getElementById('ra-impr').textContent    = fNum(r.actualImpr);
+  document.getElementById('ra-eng-lbl').textContent = engL;
+  document.getElementById('ra-eng').textContent     = r.isEng ? fNum(r.actualEng) : fNum(r.actualImpr);
+
+  // Potential
+  const szBadge = document.getElementById('safe-zone-badge');
+  szBadge.textContent = r.safeLabel;
+  szBadge.className   = 'rc-badge ' + r.safeZone;
+  document.getElementById('rp-pen').textContent     = fPct(r.penP);
+  document.getElementById('rp-sub').textContent     = `safely achievable from ${fNum(r.aud)} audience`;
+  document.getElementById('rp-budget').textContent  = fEur(r.budgetNeeded);
+  document.getElementById('rp-users').textContent   = fNum(r.potUsers);
+  document.getElementById('rp-imp-lbl').textContent = 'Impressions';
+  document.getElementById('rp-impr').textContent    = fNum(r.potImpr);
+  document.getElementById('rp-eng-lbl').textContent = engL;
+  document.getElementById('rp-eng').textContent     = r.isEng ? fNum(r.potEng) : fNum(r.potImpr);
+
+  // Gap
+  document.getElementById('rg-budget').textContent  = r.budgetGap > 0 ? '+' + fEur(r.budgetGap) : 'Fully Covered';
+  document.getElementById('rg-users').textContent   = '+' + fNum(Math.max(0, r.addUsers));
+  document.getElementById('rg-pen').textContent     = '+' + fPct(r.penGap);
+  document.getElementById('rg-eng-lbl').textContent = 'Add. ' + engL;
+  document.getElementById('rg-eng').textContent     = r.isEng ? '+' + fNum(Math.max(0, r.addEng)) : '+' + fNum(Math.max(0, r.addImpr));
+  document.getElementById('rg-mult').textContent    = r.budgetMult > 0 ? r.budgetMult.toFixed(1) + '×' : '—';
+
+  // Stats row
+  document.getElementById('stat-pen').textContent   = '+' + fPct(r.penGap);
+  document.getElementById('stat-eng-lbl').textContent = 'Add. ' + r.cfg.engName;
+  document.getElementById('stat-eng').textContent   = r.isEng ? '+' + fNum(Math.max(0, r.addEng)) : '+' + fNum(Math.max(0, r.addImpr));
+  document.getElementById('stat-gap').textContent   = r.budgetGap > 0 ? '+' + fEur(r.budgetGap) : '—';
+  document.getElementById('stat-eff-lbl').textContent = r.cfg.effLabel;
+  document.getElementById('stat-eff').textContent   = fEur(r.effMetric, r.isEng ? 4 : 2) + (r.inflPct > 0 ? ' (+'+Math.round(r.inflPct)+'%)' : '');
+  document.getElementById('chart-section-title').textContent = '📊 Campaign Scale Analysis — ' + (activeTab === 'awareness' ? 'Awareness (CPM)' : activeTab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)');
+}
+
+// ─── CHART RENDERING ──────────────────────────────────────────────────────────
+function updateChart(r) {
+  updateBars(r);
+  renderCPMCurve(r);
+}
+
+function updateBars(r) {
+  const BAR_H = 260;
+  // Actual bar
+  const aFrac  = Math.max(0.04, r.penA / 100);
+  const aEmpty = 1 - aFrac;
+  document.getElementById('bar-actual-empty').style.flex  = aEmpty * 100;
+  document.getElementById('bar-actual-filled').style.flex = aFrac * 100;
+  document.getElementById('bar-actual-filled').style.minHeight = aFrac > 0.1 ? '50px' : '20px';
+  document.getElementById('bar-actual-pct').textContent   = fPct(r.penA);
+  document.getElementById('bar-actual-budget').textContent = fEur(r.budget);
+  document.getElementById('bar-actual-empty').querySelector('span').textContent = aEmpty * 100 >= 15 ? (aEmpty*100).toFixed(0)+'% unreached' : '';
+
+  const pFrac  = Math.max(0.04, r.penP / 100);
+  const pEmpty = 1 - pFrac;
+  document.getElementById('bar-pot-empty').style.flex  = pEmpty * 100;
+  document.getElementById('bar-pot-filled').style.flex = pFrac * 100;
+  document.getElementById('bar-pot-filled').style.minHeight = pFrac > 0.1 ? '50px' : '20px';
+  document.getElementById('bar-pot-pct').textContent   = fPct(r.penP);
+  document.getElementById('bar-pot-budget').textContent = fEur(r.budgetNeeded);
+  document.getElementById('bar-pot-empty').querySelector('span').textContent = pEmpty * 100 >= 15 ? (pEmpty*100).toFixed(0)+'% unreached' : '';
+
+  document.getElementById('bar-uplift').textContent = '+' + fPct(r.penGap);
+}
+
+function renderCPMCurve(r) {
+  const svg = document.getElementById('cpm-chart');
+  const W = 460, H = 240;
+  const PL = 52, PR = 16, PT = 16, PB = 38;
+  const cW = W - PL - PR, cH = H - PT - PB;
+
+  // Generate curve data points
+  const maxPen = Math.min(r.maxR + 5, 100);
+  const pts = [];
+  for (let p = 0; p <= maxPen; p += 0.5) {
+    const cpm = getEffectiveCPM(p, r.baseCPM, r.infl, r.thr, r.isEng);
+    pts.push({ p, cpm });
+  }
+  const maxCPM = Math.max(...pts.map(pt => pt.cpm)) * 1.08;
+  const minCPM = 0;
+
+  function tx(p)   { return PL + (p / maxPen) * cW; }
+  function ty(cpm) { return PT + cH - ((cpm - minCPM) / (maxCPM - minCPM)) * cH; }
+
+  let html = '';
+
+  // Background zones
+  const x0   = tx(0);
+  const xThr = tx(Math.min(r.thr, maxPen));
+  const xInfl = tx(Math.min(r.isEng ? 40 : 50, maxPen));
+  const xMax  = tx(maxPen);
+  html += `<rect x="${x0}" y="${PT}" width="${xThr-x0}" height="${cH}" fill="rgba(67,160,71,0.12)" rx="0"/>`;
+  html += `<rect x="${xThr}" y="${PT}" width="${xInfl-xThr}" height="${cH}" fill="rgba(255,193,7,0.1)" rx="0"/>`;
+  html += `<rect x="${xInfl}" y="${PT}" width="${xMax-xInfl}" height="${cH}" fill="rgba(230,0,35,0.1)" rx="0"/>`;
+
+  // Grid lines
+  const isDarkMode = document.body.classList.contains('dark');
+  const gridColor = isDarkMode ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)';
+  const axisColor = isDarkMode ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.25)';
+  const textColor = isDarkMode ? '#888' : '#999';
+  for (let i = 0; i <= 4; i++) {
+    const yy = PT + (cH / 4) * i;
+    html += `<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="${gridColor}" stroke-width="1"/>`;
+    const val = maxCPM - (maxCPM / 4) * i;
+    html += `<text x="${PL-6}" y="${yy+4}" text-anchor="end" font-size="9" fill="${textColor}">€${val.toFixed(val<1?3:val<10?2:1)}</text>`;
+  }
+  for (let p = 0; p <= maxPen; p += 20) {
+    const xx = tx(p);
+    html += `<line x1="${xx}" y1="${PT}" x2="${xx}" y2="${PT+cH}" stroke="${gridColor}" stroke-width="1"/>`;
+    html += `<text x="${xx}" y="${PT+cH+14}" text-anchor="middle" font-size="9" fill="${textColor}">${p}%</text>`;
+  }
+
+  // Axes
+  html += `<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+cH}" stroke="${axisColor}" stroke-width="1.5"/>`;
+  html += `<line x1="${PL}" y1="${PT+cH}" x2="${W-PR}" y2="${PT+cH}" stroke="${axisColor}" stroke-width="1.5"/>`;
+
+  // Threshold line
+  html += `<line x1="${xThr}" y1="${PT}" x2="${xThr}" y2="${PT+cH}" stroke="rgba(255,193,7,0.6)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  html += `<text x="${xThr+3}" y="${PT+10}" font-size="8" fill="rgba(255,193,7,0.9)">Threshold</text>`;
+
+  // Inflation point line
+  html += `<line x1="${xInfl}" y1="${PT}" x2="${xInfl}" y2="${PT+cH}" stroke="rgba(230,0,35,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  html += `<text x="${xInfl+3}" y="${PT+20}" font-size="8" fill="rgba(230,0,35,0.8)">Infl. Point</text>`;
+
+  // Max reach line
+  const xMaxR = tx(r.maxR);
+  html += `<line x1="${xMaxR}" y1="${PT}" x2="${xMaxR}" y2="${PT+cH}" stroke="rgba(100,181,246,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  html += `<text x="${xMaxR-3}" y="${PT+10}" text-anchor="end" font-size="8" fill="rgba(100,181,246,0.9)">Max</text>`;
+
+  // CPM curve path
+  const pathPts = pts.map((pt, i) => `${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.cpm).toFixed(1)}`).join(' ');
+  // Area fill
+  const areaPath = pathPts + ` L${tx(maxPen).toFixed(1)},${(PT+cH).toFixed(1)} L${tx(0).toFixed(1)},${(PT+cH).toFixed(1)} Z`;
+  html += `<defs><linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E60023" stop-opacity="0.3"/><stop offset="100%" stop-color="#E60023" stop-opacity="0.02"/></linearGradient></defs>`;
+  html += `<path d="${areaPath}" fill="url(#curveGrad)"/>`;
+  html += `<path d="${pathPts}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  // Actual point marker
+  if (r.penA <= maxPen) {
+    const ax = tx(r.penA);
+    const ay = ty(getEffectiveCPM(r.penA, r.baseCPM, r.infl, r.thr, r.isEng));
+    html += `<circle cx="${ax}" cy="${ay}" r="6" fill="#ff9800" stroke="${isDarkMode?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
+    html += `<line x1="${ax}" y1="${ay+7}" x2="${ax}" y2="${PT+cH}" stroke="#ff9800" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>`;
+  }
+  // Potential point marker
+  if (r.penP <= maxPen) {
+    const px2 = tx(r.penP);
+    const py2 = ty(getEffectiveCPM(r.penP, r.baseCPM, r.infl, r.thr, r.isEng));
+    html += `<circle cx="${px2}" cy="${py2}" r="6" fill="#43a047" stroke="${isDarkMode?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
+    html += `<line x1="${px2}" y1="${py2+7}" x2="${px2}" y2="${PT+cH}" stroke="#43a047" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>`;
+  }
+
+  // Axis labels
+  html += `<text x="${PL + cW/2}" y="${H-4}" text-anchor="middle" font-size="9" fill="${textColor}" font-weight="600">Audience Penetration →</text>`;
+  html += `<text x="10" y="${PT + cH/2}" text-anchor="middle" font-size="9" fill="${textColor}" font-weight="600" transform="rotate(-90 10 ${PT + cH/2})">${r.cfg.effLabel.replace('Eff. ','').replace(' at Target','')} →</text>`;
+
+  svg.innerHTML = html;
+}
+
+// ─── RECOMMENDATION TEXT ─────────────────────────────────────────────────────
+function updateRec(r) {
+  const engN = r.cfg.engName.toLowerCase();
+  const tab  = activeTab;
+  const effStr = fEur(r.effMetric, r.isEng ? 4 : 2) + (r.inflPct > 0 ? ` (+${Math.round(r.inflPct)}% above base rate)` : '');
+
+  let html = '';
+  html += `<p>Your <strong>${tab === 'awareness' ? 'Awareness (CPM)' : tab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)'}</strong> campaign successfully reached <strong>${fPct(r.penA)}</strong> of the potential audience (${fNum(r.actualUsers)} users) using a total budget of <strong>${fEur(r.budget)}</strong> over ${r.weeks} weeks at an average frequency of ${r.freq}× per week.</p>`;
+
+  html += `<div class="rec-highlight">Based on the audience size of ${fNum(r.aud)} and the campaign parameters, the safe scaling potential for this campaign was <strong>${fPct(r.penP)}</strong> penetration — ${fNum(r.potUsers)} unique users. At this level, the effective ${r.isEng ? r.cfg.effLabel.replace('Eff. ','').replace(' at Target','') : 'CPM'} would have been ${effStr}, remaining within an acceptable cost efficiency range.</div>`;
+
+  html += `<p>To reach the <strong>${fPct(r.penP)} penetration</strong> target, a total campaign budget of <strong>${fEur(r.budgetNeeded)}</strong> would have been required — an increase of <strong>+${fEur(r.budgetGap)}</strong> (${r.budgetMult.toFixed(1)}× the actual budget). This would have delivered an additional <strong>${fNum(Math.max(0, r.addUsers))} users</strong> and <strong>+${fNum(Math.max(0, r.isEng ? r.addEng : r.addImpr))} ${engN}</strong> compared to the delivered campaign.</p>`;
+
+  html += `<p><strong>Recommendation for the next campaign flight:</strong> Plan with a total budget of <strong>${fEur(r.budgetNeeded)}</strong> targeting <strong>${fPct(r.penP)} audience penetration</strong>. Keep weekly frequency at ${r.freq}× over a ${r.weeks}-week flight. This keeps the campaign within a ${r.safeZone === 'safe' ? 'cost-efficient safe zone' : r.safeZone === 'warn' ? 'moderate inflation zone' : 'elevated but manageable cost range'} and maximises ${tab === 'awareness' ? 'brand awareness reach' : tab === 'video' ? 'video completion impact' : 'qualified consideration traffic'} for the audience.</p>`;
+
+  document.getElementById('rec-body').innerHTML = html;
+}
+
+// ─── TAB / THEME / ADV ────────────────────────────────────────────────────────
+function switchTab(t) {
+  saveTabData();
+  activeTab = t;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  loadTabData();
+  updateTabUI();
+  calculate();
+}
+function saveTabData() {
+  ['audienceSize','budgetUsed'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) tabData[activeTab][id] = el.value.replace(/,/g,'');
+  });
+  ['metric1','metric2','weeks','frequency','penReached','penPotential'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) tabData[activeTab][id] = el.value;
+  });
+  ['adv-threshold','adv-inflation','adv-maxreach'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    const key = ['threshold','inflation','maxreach'][i];
+    if (el) tabData[activeTab][key] = el.value;
+  });
+}
+function loadTabData() {
+  const d = tabData[activeTab];
+  document.getElementById('audienceSize').value = d.audienceSize ? parseFloat(d.audienceSize).toLocaleString('en-US') : '';
+  document.getElementById('budgetUsed').value   = d.budgetUsed ? parseFloat(d.budgetUsed).toLocaleString('en-US') : '';
+  document.getElementById('metric1').value      = d.metric1 || '';
+  document.getElementById('metric2').value      = d.metric2 || '';
+  document.getElementById('weeks').value        = d.weeks || '';
+  document.getElementById('frequency').value    = d.frequency || '';
+  document.getElementById('penReached').value   = d.penReached || '';
+  document.getElementById('penPotential').value = d.penPotential || '';
+  document.getElementById('adv-threshold').value = d.threshold || '';
+  document.getElementById('adv-inflation').value  = d.inflation || '';
+  document.getElementById('adv-maxreach').value   = d.maxreach || '';
+}
+function updateTabUI() {
+  const cfg = tabConfigs[activeTab];
+  document.getElementById('m1-label').textContent = cfg.m1Label;
+  document.getElementById('m1-hint').textContent  = cfg.m1Hint;
+  document.getElementById('metric1').placeholder  = cfg.m1Ph;
+  const m2f = document.getElementById('m2-field');
+  if (cfg.m2) {
+    m2f.classList.remove('hidden');
+    document.getElementById('m2-label').textContent = cfg.m2Label;
+    document.getElementById('m2-hint').textContent  = cfg.m2Hint;
+    document.getElementById('metric2').placeholder  = cfg.m2Ph;
+  } else {
+    m2f.classList.add('hidden');
+  }
+  const isEng = activeTab !== 'awareness';
+  document.getElementById('adv-threshold').placeholder = isEng ? '20' : '30';
+  document.getElementById('adv-inflation').placeholder  = isEng ? '300' : '50';
+  document.getElementById('adv-maxreach').placeholder   = isEng ? '75' : '85';
+  document.getElementById('adv-thr-lbl').textContent    = 'Inflation Threshold (%)';
+  document.getElementById('adv-infl-lbl').textContent   = 'Inflation Rate at ' + (isEng ? '40%' : '50%') + ' (%)';
+}
+function toggleAdv() {
+  showAdv = !showAdv;
+  document.getElementById('adv-body').classList.toggle('hidden', !showAdv);
+  document.getElementById('adv-arrow').textContent = showAdv ? '▼ hide' : '▶ show';
+}
+function toggleTheme() {
+  isDark = !isDark;
+  document.body.className = isDark ? 'dark' : 'light';
+  document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
+  document.getElementById('theme-txt').textContent  = isDark ? 'Dark' : 'Light';
+  if (lastResult) renderCPMCurve(lastResult);
+}
+
+function copyRec() {
+  const body = document.getElementById('rec-body');
+  const text = body ? body.innerText : '';
+  navigator.clipboard.writeText(text).then(() => {
+    const ok = document.getElementById('rec-copy-ok');
+    ok.classList.remove('hidden');
+    setTimeout(() => ok.classList.add('hidden'), 2000);
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  updateTabUI();
+  calculate();
+});
+</script>
+</body>
+</html>
