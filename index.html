@@ -421,6 +421,13 @@ const tabConfigs = {
   consideration: { m1Label:'🖱️ Base CPC (€)', m1Hint:'Cost per click', m1Ph:'e.g., 0.45', m2:true, m2Label:'📊 CTR (%)', m2Hint:'Click-through rate', m2Ph:'e.g., 1.2', engName:'Pin Clicks', effLabel:'Eff. CPC at Target', inflPt:40 }
 };
 
+// ─── FIX: Map advanced input IDs to the keys that calculate() reads ──────────
+const advKeyMap = {
+  'adv-threshold': 'threshold',
+  'adv-inflation': 'inflation',
+  'adv-maxreach':  'maxreach'
+};
+
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function fNum(n) {
   if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
@@ -440,10 +447,11 @@ function handleNum(el) {
 }
 function handleDec(el) {
   const v = el.value;
+  const key = advKeyMap[el.id] || el.id;  // ← THIS IS THE FIX
   if (v === '' || /^[0-9]*\.?[0-9]*$/.test(v)) {
-    tabData[activeTab][el.id] = v;
+    tabData[activeTab][key] = v;
   } else {
-    el.value = tabData[activeTab][el.id] || '';
+    el.value = tabData[activeTab][key] || '';
   }
 }
 
@@ -865,3 +873,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
