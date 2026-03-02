@@ -7,8 +7,8 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;transition:background 0.3s,color 0.3s}
-body.dark{--bg:#0d0d0d;--surface:#161616;--card:#1e1e1e;--border:#2a2a2a;--input-bg:#252525;--input-border:#333;--text:#f0f0f0;--text-2:#aaa;--text-3:#666;--zone-safe:rgba(0,180,80,0.08);--zone-warn:rgba(255,193,7,0.08);--zone-hot:rgba(230,0,35,0.1)}
-body.light{--bg:#f5f5f5;--surface:#fff;--card:#fff;--border:#e5e5e5;--input-bg:#fafafa;--input-border:#ddd;--text:#1a1a1a;--text-2:#555;--text-3:#999;--zone-safe:rgba(0,180,80,0.07);--zone-warn:rgba(255,193,7,0.1);--zone-hot:rgba(230,0,35,0.08)}
+body.dark{--bg:#0d0d0d;--surface:#161616;--card:#1e1e1e;--border:#2a2a2a;--input-bg:#252525;--input-border:#333;--text:#f0f0f0;--text-2:#aaa;--text-3:#666}
+body.light{--bg:#f5f5f5;--surface:#fff;--card:#fff;--border:#e5e5e5;--input-bg:#fafafa;--input-border:#ddd;--text:#1a1a1a;--text-2:#555;--text-3:#999}
 :root{--red:#E60023;--red-dark:#ad081b;--orange:#ff9800;--green:#43a047;--green-light:#66bb6a;--blue:#42a5f5}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);min-height:100vh}
@@ -43,7 +43,6 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
 .result-card.actual{background:linear-gradient(135deg,rgba(255,152,0,0.12),rgba(255,152,0,0.06));border-color:rgba(255,152,0,0.35)}
 .result-card.potential{background:linear-gradient(135deg,rgba(67,160,71,0.12),rgba(67,160,71,0.06));border-color:rgba(67,160,71,0.35)}
 .result-card.gap{background:linear-gradient(135deg,rgba(230,0,35,0.1),rgba(230,0,35,0.05));border-color:rgba(230,0,35,0.3)}
-/* ── NEW: exceeded state for gap card ── */
 .result-card.exceeded{background:linear-gradient(135deg,rgba(67,160,71,0.12),rgba(67,160,71,0.06));border-color:rgba(67,160,71,0.4)}
 .rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .rc-title{font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
@@ -105,14 +104,12 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
 .rec-body strong{color:var(--text);font-weight:700}
 .rec-highlight{background:linear-gradient(135deg,rgba(230,0,35,0.08),rgba(230,0,35,0.04));border-left:3px solid var(--red);padding:0.875rem 1rem;border-radius:0 0.5rem 0.5rem 0;margin:1rem 0;font-size:0.85rem;line-height:1.6;color:var(--text-2)}
 .rec-highlight.green{background:linear-gradient(135deg,rgba(67,160,71,0.1),rgba(67,160,71,0.04));border-left-color:var(--green-light)}
-.copy-row{display:flex;justify-content:flex-end;margin-top:0.75rem}
 .copy-btn{padding:0.4rem 0.875rem;background:var(--input-bg);border:1px solid var(--border);border-radius:0.5rem;cursor:pointer;font-size:0.75rem;color:var(--text-2);font-weight:600}
 .copy-ok{color:var(--green-light);font-size:0.78rem;font-weight:600;padding:0.4rem 0.875rem}
-.safe-badge{display:inline-flex;align-items:center;gap:0.35rem;padding:0.3rem 0.75rem;border-radius:9999px;font-size:0.75rem;font-weight:700}
-.safe-badge.safe{background:rgba(67,160,71,0.15);color:var(--green-light);border:1px solid rgba(67,160,71,0.4)}
-.safe-badge.warn{background:rgba(255,193,7,0.15);color:#ffc107;border:1px solid rgba(255,193,7,0.4)}
-.safe-badge.danger{background:rgba(230,0,35,0.12);color:var(--red);border:1px solid rgba(230,0,35,0.35)}
 .hidden{display:none!important}
+
+/* info tooltip on potential card budget */
+.budget-note{font-size:0.65rem;color:var(--text-3);margin-top:0.35rem;line-height:1.4;font-style:italic}
 </style>
 </head>
 <body class="dark">
@@ -149,7 +146,6 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <div class="icon" id="panel-icon">📋</div>
         <span id="panel-title-text">Campaign Parameters</span>
       </div>
-
       <div class="field">
         <label>🎯 Potential Audience Size</label>
         <input type="text" id="audienceSize" placeholder="e.g., 1,200,000" oninput="handleNum(this);calculate()">
@@ -193,7 +189,6 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <div class="derived hidden" id="potential-users"></div>
         <div class="derived hidden" id="potential-cap"></div>
       </div>
-
       <div style="border-top:1px solid var(--border);margin-top:0.5rem;padding-top:0.5rem">
         <button class="adv-toggle" onclick="toggleAdv()">
           <span>⚙️ Advanced Settings</span>
@@ -251,26 +246,29 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <div class="rc-main potential" id="rp-pen">—</div>
         <div class="rc-sub" id="rp-sub">achievable penetration</div>
         <div class="rc-metrics">
-          <div class="metric-item"><div class="ml">Budget Needed</div><div class="mv" id="rp-budget">—</div></div>
+          <div class="metric-item">
+            <div class="ml">Recommended Budget</div>
+            <div class="mv" id="rp-budget">—</div>
+            <div class="budget-note">Full future campaign (0% → target)</div>
+          </div>
           <div class="metric-item"><div class="ml">Users Reached</div><div class="mv" id="rp-users">—</div></div>
           <div class="metric-item"><div class="ml" id="rp-imp-lbl">Impressions</div><div class="mv" id="rp-impr">—</div></div>
           <div class="metric-item"><div class="ml" id="rp-eng-lbl">Engagements</div><div class="mv" id="rp-eng">—</div></div>
         </div>
       </div>
 
-      <!-- Gap card — state toggled by JS between 'gap' and 'exceeded' -->
       <div class="result-card gap hidden" id="card-gap">
         <div class="rc-header">
           <span class="rc-title gap" id="rg-title">💡 Scaling Opportunity</span>
           <span class="rc-badge gap" id="rg-badge">Missed</span>
         </div>
         <div class="rc-main gap" id="rg-budget">—</div>
-        <div class="rc-sub" id="rg-sub">additional budget would have unlocked</div>
+        <div class="rc-sub" id="rg-sub">additional budget within this campaign would have unlocked</div>
         <div class="rc-metrics" id="rg-metrics">
           <div class="metric-item"><div class="ml">Add. Users</div><div class="mv" id="rg-users">—</div></div>
           <div class="metric-item"><div class="ml">Penetration Uplift</div><div class="mv" id="rg-pen">—</div></div>
           <div class="metric-item"><div class="ml" id="rg-eng-lbl">Add. Engagements</div><div class="mv" id="rg-eng">—</div></div>
-          <div class="metric-item"><div class="ml">Budget Multiplier</div><div class="mv" id="rg-mult">—</div></div>
+          <div class="metric-item"><div class="ml">Total if Scaled</div><div class="mv" id="rg-total">—</div></div>
         </div>
       </div>
     </div>
@@ -283,7 +281,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <div style="font-size:0.78rem;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.05em">Audience Penetration</div>
         <div class="pen-bars">
           <div class="pen-bar-wrap">
-            <div class="pen-bar-col actual" id="bar-actual">
+            <div class="pen-bar-col actual" id="bar-actual-col">
               <div class="bar-empty" id="bar-actual-empty" style="flex:1"><span id="bar-actual-empty-txt"></span></div>
               <div class="bar-filled" id="bar-actual-filled" style="background:linear-gradient(180deg,#ffa726,#f57c00,#e65100)">
                 <div class="pct" id="bar-actual-pct">0%</div>
@@ -298,7 +296,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
             <div class="uplift" id="bar-uplift">+0%</div>
           </div>
           <div class="pen-bar-wrap">
-            <div class="pen-bar-col potential" id="bar-potential">
+            <div class="pen-bar-col potential" id="bar-pot-col">
               <div class="bar-empty" id="bar-pot-empty" style="flex:1"><span id="bar-pot-empty-txt"></span></div>
               <div class="bar-filled" id="bar-pot-filled" style="background:linear-gradient(180deg,#81c784,#43a047,#2e7d32)">
                 <div class="pct" id="bar-pot-pct">0%</div>
@@ -328,11 +326,11 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <div class="sv" id="stat-pen" style="color:var(--green-light)">—</div>
       </div>
       <div class="stat-box">
-        <div class="sl" id="stat-eng-lbl">Add. Impressions</div>
+        <div class="sl" id="stat-eng-lbl">Add. Engagements</div>
         <div class="sv" id="stat-eng" style="color:var(--blue)">—</div>
       </div>
       <div class="stat-box">
-        <div class="sl">Budget Gap</div>
+        <div class="sl">Incremental Budget Gap</div>
         <div class="sv" id="stat-gap" style="color:var(--red)">—</div>
       </div>
       <div class="stat-box">
@@ -366,7 +364,6 @@ const tabData = {
   video:         { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'300', maxreach:'75' },
   consideration: { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'300', maxreach:'75' }
 };
-
 const tabConfigs = {
   awareness:     { m1Label:'💰 Base CPM (€)', m1Hint:'Cost per 1,000 impressions', m1Ph:'e.g., 14.50', m2:false, engName:'Impressions', effLabel:'Eff. CPM at Target', inflPt:50 },
   video:         { m1Label:'🎬 Base CPCV95% (€)', m1Hint:'Cost per completed view at 95%', m1Ph:'e.g., 0.05', m2:true, m2Label:'📊 VTR95% (%)', m2Hint:'View-through rate at 95%', m2Ph:'e.g., 60', engName:'Video Views', effLabel:'Eff. CPCV at Target', inflPt:40 },
@@ -379,59 +376,43 @@ function fNum(n) {
   if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
   return Math.round(n).toLocaleString('en-US');
 }
-function fEur(n, dec=0) { return '€' + n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }); }
+function fEur(n, dec=0) { return '€' + n.toLocaleString('en-US', { minimumFractionDigits:dec, maximumFractionDigits:dec }); }
 function fPct(n) { return n.toFixed(1) + '%'; }
-
 function handleNum(el) {
   const raw = el.value.replace(/,/g,'');
-  if (raw === '' || !isNaN(raw)) {
-    tabData[activeTab][el.id] = raw;
-    el.value = raw ? parseFloat(raw).toLocaleString('en-US') : '';
-  }
+  if (raw === '' || !isNaN(raw)) { tabData[activeTab][el.id] = raw; el.value = raw ? parseFloat(raw).toLocaleString('en-US') : ''; }
 }
 function handleDec(el) {
   const v = el.value;
-  if (v === '' || /^[0-9]*\.?[0-9]*$/.test(v)) {
-    tabData[activeTab][el.id] = v;
-  } else {
-    el.value = tabData[activeTab][el.id] || '';
-  }
+  if (v === '' || /^[0-9]*\.?[0-9]*$/.test(v)) { tabData[activeTab][el.id] = v; }
+  else { el.value = tabData[activeTab][el.id] || ''; }
 }
 
-// ─── CALCULATION ENGINE ───────────────────────────────────────────────────────
+// ─── CALC ENGINE ──────────────────────────────────────────────────────────────
 function getEffectiveCPM(pen, baseCPM, inflRate, threshold, isEng) {
   if (baseCPM <= 0 || pen < threshold) return baseCPM;
   const a = pen - threshold;
   const inflPt = isEng ? 40 : 50;
-  if (pen <= inflPt) {
-    return baseCPM * (1 + (a / (inflPt - threshold)) * inflRate / 100);
-  }
+  if (pen <= inflPt) return baseCPM * (1 + (a / (inflPt - threshold)) * inflRate / 100);
   const s = (pen - inflPt) / 10;
-  if (isEng) {
-    return baseCPM * (1 + inflRate/100 + (Math.pow(1.8, s) - 1) * 1.5);
-  } else {
-    return baseCPM * (1 + inflRate/100 + Math.pow(s, 2) * 0.15);
-  }
+  return isEng
+    ? baseCPM * (1 + inflRate/100 + (Math.pow(1.8, s) - 1) * 1.5)
+    : baseCPM * (1 + inflRate/100 + Math.pow(s, 2) * 0.15);
 }
-
 function getNaturalFrequency(pen, weeks, threshold) {
   const base = weeks <= 2 ? 4 : weeks <= 4 ? 3.5 : weeks <= 8 ? 2.5 : weeks <= 12 ? 2 : 1.5;
   if (pen < threshold) return base;
-  const decay = Math.pow((pen - threshold) / (100 - threshold), 1.5);
-  return base * (1 - decay * 0.6);
+  return base * (1 - Math.pow((pen - threshold) / (100 - threshold), 1.5) * 0.6);
 }
-
-function calcBudgetNeeded(startPen, targetPen, freq, aud, weeks, baseCPM, inflRate, threshold, maxReach, isEng) {
-  // ── FIX: guard against targetPen ≤ startPen ──────────────────────────────
+function calcBudgetNeeded(startPen, targetPen, freq, aud, weeks, baseCPM, inflRate, threshold, isEng) {
   if (targetPen <= startPen || baseCPM <= 0 || targetPen <= 0) return 0;
   let total = 0;
   for (let p = startPen; p < targetPen; p += 0.5) {
-    const eCPM = getEffectiveCPM(p, baseCPM, inflRate, threshold, isEng);
-    const natF = getNaturalFrequency(p, weeks, threshold);
-    const prem = freq > natF ? 1 + (freq / natF - 1) * 0.5 : 1;
-    const incP = (p + 0.5 > targetPen) ? (targetPen - p) : 0.5;
-    const incUsers = aud * incP / 100;
-    total += (incUsers * freq * weeks / 1000) * eCPM * prem;
+    const eCPM  = getEffectiveCPM(p, baseCPM, inflRate, threshold, isEng);
+    const natF  = getNaturalFrequency(p, weeks, threshold);
+    const prem  = freq > natF ? 1 + (freq / natF - 1) * 0.5 : 1;
+    const incP  = Math.min(0.5, targetPen - p);
+    total += (aud * incP / 100 * freq * weeks / 1000) * eCPM * prem;
   }
   return total;
 }
@@ -450,80 +431,78 @@ function calculate() {
   const freq   = parseFloat(d.frequency) || 0;
   const penA   = parseFloat(d.penReached) || 0;
   const penP   = parseFloat(d.penPotential) || 0;
-  const thr    = parseFloat(d.threshold) || (isEng ? 20 : 30);
-  const infl   = parseFloat(d.inflation) || (isEng ? 300 : 50);
-  const maxR   = parseFloat(d.maxreach) || (isEng ? 75 : 85);
+  const thr    = parseFloat(d.threshold)   || (isEng ? 20 : 30);
+  const infl   = parseFloat(d.inflation)   || (isEng ? 300 : 50);
+  const maxR   = parseFloat(d.maxreach)    || (isEng ? 75 : 85);
 
   const baseCPM   = isEng ? (m1 * m2 * 10) : m1;
   const cappedPot = Math.min(penP, maxR);
 
-  // Derived hints
+  // Hints
   const dcEl = document.getElementById('derived-cpm');
-  if (isEng && baseCPM > 0 && m2 > 0) {
-    dcEl.classList.remove('hidden');
-    dcEl.textContent = '💰 Effective CPM: ' + fEur(baseCPM, 2);
-  } else { dcEl.classList.add('hidden'); }
+  if (isEng && baseCPM > 0 && m2 > 0) { dcEl.classList.remove('hidden'); dcEl.textContent = '💰 Effective CPM: ' + fEur(baseCPM, 2); }
+  else dcEl.classList.add('hidden');
 
   const ruEl = document.getElementById('reached-users');
-  if (penA > 0 && aud > 0) {
-    ruEl.classList.remove('hidden');
-    ruEl.textContent = '= ' + (aud * penA / 100).toLocaleString('en-US', {maximumFractionDigits:0}) + ' users reached';
-  } else { ruEl.classList.add('hidden'); }
+  if (penA > 0 && aud > 0) { ruEl.classList.remove('hidden'); ruEl.textContent = '= ' + (aud*penA/100).toLocaleString('en-US',{maximumFractionDigits:0}) + ' users reached'; }
+  else ruEl.classList.add('hidden');
 
   const puEl = document.getElementById('potential-users');
   const pcEl = document.getElementById('potential-cap');
-  if (penP > 0 && aud > 0) {
-    puEl.classList.remove('hidden');
-    puEl.textContent = '= ' + (aud * cappedPot / 100).toLocaleString('en-US', {maximumFractionDigits:0}) + ' target users';
-  } else { puEl.classList.add('hidden'); }
-  if (penP > maxR) {
-    pcEl.classList.remove('hidden');
-    pcEl.textContent = '⚠️ Capped at ' + maxR + '% (max reachable)';
-  } else { pcEl.classList.add('hidden'); }
+  if (penP > 0 && aud > 0) { puEl.classList.remove('hidden'); puEl.textContent = '= ' + (aud*cappedPot/100).toLocaleString('en-US',{maximumFractionDigits:0}) + ' target users'; }
+  else puEl.classList.add('hidden');
+  if (penP > maxR) { pcEl.classList.remove('hidden'); pcEl.textContent = '⚠️ Capped at ' + maxR + '% (max reachable)'; }
+  else pcEl.classList.add('hidden');
 
-  if (!aud || !m1 || !budget || !weeks || !freq || !penA || !penP) {
-    showPlaceholder();
-    return;
-  }
+  if (!aud || !m1 || !budget || !weeks || !freq || !penA || !penP) { showPlaceholder(); return; }
 
-  // ── ACTUAL ──
+  // Actual
   const actualUsers = aud * penA / 100;
   const actualImpr  = actualUsers * freq * weeks;
   const actualEng   = isEng ? actualImpr * m2 / 100 : actualImpr;
 
-  // ── POTENTIAL ──
-  const potUsers      = aud * cappedPot / 100;
-  const potImpr       = potUsers * freq * weeks;
-  const potEng        = isEng ? potImpr * m2 / 100 : potImpr;
+  // Potential
+  const potUsers = aud * cappedPot / 100;
+  const potImpr  = potUsers * freq * weeks;
+  const potEng   = isEng ? potImpr * m2 / 100 : potImpr;
 
-  // ── FIX: budget needed is from 0 → cappedPot; gap is only meaningful
-  //         when cappedPot > penA. If actual already meets/exceeds the
-  //         potential target there is no untapped opportunity. ──────────────
-  const budgetNeeded  = calcBudgetNeeded(0, cappedPot, freq, aud, weeks, baseCPM, infl, thr, maxR, isEng);
-  const targetExceeded = penA >= cappedPot;                          // ← KEY FLAG
-  const budgetGap     = targetExceeded ? 0 : Math.max(0, budgetNeeded - budget);
-  const addUsers      = targetExceeded ? 0 : Math.max(0, potUsers - actualUsers);
-  const penGap        = targetExceeded ? 0 : Math.max(0, cappedPot - penA);
-  const addEng        = targetExceeded ? 0 : Math.max(0, potEng - actualEng);
-  const addImpr       = targetExceeded ? 0 : Math.max(0, potImpr - actualImpr);
+  // ── Budget calculations — TWO separate figures with clear semantics ────────
+  //
+  // 1. budgetNeeded  = full cost of a FUTURE campaign from 0% → cappedPot
+  //    → shown on the Potential card as "Recommended Budget for next flight"
+  //
+  // 2. budgetGap     = INCREMENTAL cost to continue THIS campaign from
+  //                    penA → cappedPot (i.e. what was missing in this flight)
+  //    → shown on the Scaling Opportunity card
+  //
+  const targetExceeded = penA >= cappedPot;
+  const budgetNeeded   = calcBudgetNeeded(0,    cappedPot, freq, aud, weeks, baseCPM, infl, thr, isEng);
+  const budgetGap      = targetExceeded ? 0
+                       : calcBudgetNeeded(penA, cappedPot, freq, aud, weeks, baseCPM, infl, thr, isEng);
+  // Total spend if THIS campaign had been scaled to the target
+  const totalIfScaled  = budget + budgetGap;
 
-  // ── EFFECTIVE CPM at target ──
-  const eCPMAtTarget  = getEffectiveCPM(cappedPot, baseCPM, infl, thr, isEng);
-  const natFAtTarget  = getNaturalFrequency(cappedPot, weeks, thr);
-  const premAtTarget  = freq > natFAtTarget ? 1 + (freq / natFAtTarget - 1) * 0.5 : 1;
-  const avgEffCPM     = eCPMAtTarget * premAtTarget;
-  const effMetric     = isEng && m2 > 0 ? avgEffCPM / (m2 * 10) : avgEffCPM;
-  const inflPct       = baseCPM > 0 ? (avgEffCPM / baseCPM - 1) * 100 : 0;
+  const penGap   = targetExceeded ? 0 : Math.max(0, cappedPot - penA);
+  const addUsers = targetExceeded ? 0 : Math.max(0, potUsers - actualUsers);
+  const addEng   = targetExceeded ? 0 : Math.max(0, potEng - actualEng);
+  const addImpr  = targetExceeded ? 0 : Math.max(0, potImpr - actualImpr);
 
-  // ── SAFE ZONE ──
+  // Effective metric at target
+  const eCPMAtTarget = getEffectiveCPM(cappedPot, baseCPM, infl, thr, isEng);
+  const natFAtTarget = getNaturalFrequency(cappedPot, weeks, thr);
+  const premAtTarget = freq > natFAtTarget ? 1 + (freq / natFAtTarget - 1) * 0.5 : 1;
+  const avgEffCPM    = eCPMAtTarget * premAtTarget;
+  const effMetric    = isEng && m2 > 0 ? avgEffCPM / (m2 * 10) : avgEffCPM;
+  const inflPct      = baseCPM > 0 ? (avgEffCPM / baseCPM - 1) * 100 : 0;
+
+  // Safe zone
   let safeZone = 'safe', safeLabel = '✅ Safe Zone';
-  if (cappedPot >= tabConfigs[activeTab].inflPt + 10) { safeZone = 'danger'; safeLabel = '⚠️ High Inflation'; }
-  else if (cappedPot >= thr) { safeZone = 'warn'; safeLabel = '⚡ Inflation Zone'; }
+  if (cappedPot >= cfg.inflPt + 10) { safeZone = 'danger'; safeLabel = '⚠️ High Inflation'; }
+  else if (cappedPot >= thr)        { safeZone = 'warn';   safeLabel = '⚡ Inflation Zone'; }
 
   lastResult = { aud, m1, m2, budget, weeks, freq, penA, penP: cappedPot, baseCPM, thr, infl, maxR,
     isEng, cfg, actualUsers, actualImpr, actualEng, potUsers, potImpr, potEng,
-    budgetNeeded, budgetGap, targetExceeded,
-    budgetMult: budgetNeeded > 0 ? budgetNeeded / budget : 0,
+    budgetNeeded, budgetGap, totalIfScaled, targetExceeded,
     effMetric, inflPct, safeZone, safeLabel,
     addUsers, penGap, addEng, addImpr };
 
@@ -533,37 +512,32 @@ function calculate() {
   hidePlaceholder();
 }
 
-// ─── UI UPDATE ────────────────────────────────────────────────────────────────
+// ─── CARDS ────────────────────────────────────────────────────────────────────
 function showPlaceholder() {
   document.getElementById('placeholder').classList.remove('hidden');
-  ['card-actual','card-potential','card-gap','chart-section','rec-section'].forEach(id => {
-    document.getElementById(id).classList.add('hidden');
-  });
+  ['card-actual','card-potential','card-gap','chart-section','rec-section'].forEach(id => document.getElementById(id).classList.add('hidden'));
 }
 function hidePlaceholder() {
   document.getElementById('placeholder').classList.add('hidden');
-  ['card-actual','card-potential','card-gap','chart-section','rec-section'].forEach(id => {
-    document.getElementById(id).classList.remove('hidden');
-  });
+  ['card-actual','card-potential','card-gap','chart-section','rec-section'].forEach(id => document.getElementById(id).classList.remove('hidden'));
 }
 
 function updateCards(r) {
   const engL = r.cfg.engName;
 
-  // Actual card
-  document.getElementById('ra-pen').textContent    = fPct(r.penA);
-  document.getElementById('ra-sub').textContent    = `of ${fNum(r.aud)} audience reached`;
-  document.getElementById('ra-budget').textContent = fEur(r.budget);
-  document.getElementById('ra-users').textContent  = fNum(r.actualUsers);
+  // Actual
+  document.getElementById('ra-pen').textContent     = fPct(r.penA);
+  document.getElementById('ra-sub').textContent     = `of ${fNum(r.aud)} audience reached`;
+  document.getElementById('ra-budget').textContent  = fEur(r.budget);
+  document.getElementById('ra-users').textContent   = fNum(r.actualUsers);
   document.getElementById('ra-imp-lbl').textContent = 'Impressions';
-  document.getElementById('ra-impr').textContent   = fNum(r.actualImpr);
+  document.getElementById('ra-impr').textContent    = fNum(r.actualImpr);
   document.getElementById('ra-eng-lbl').textContent = engL;
-  document.getElementById('ra-eng').textContent    = r.isEng ? fNum(r.actualEng) : fNum(r.actualImpr);
+  document.getElementById('ra-eng').textContent     = r.isEng ? fNum(r.actualEng) : fNum(r.actualImpr);
 
-  // Potential card
+  // Potential — budget here is the FULL future campaign cost 0→target
   const szBadge = document.getElementById('safe-zone-badge');
-  szBadge.textContent = r.safeLabel;
-  szBadge.className   = 'rc-badge ' + r.safeZone;
+  szBadge.textContent = r.safeLabel; szBadge.className = 'rc-badge ' + r.safeZone;
   document.getElementById('rp-pen').textContent    = fPct(r.penP);
   document.getElementById('rp-sub').textContent    = `safely achievable from ${fNum(r.aud)} audience`;
   document.getElementById('rp-budget').textContent = fEur(r.budgetNeeded);
@@ -573,7 +547,7 @@ function updateCards(r) {
   document.getElementById('rp-eng-lbl').textContent = engL;
   document.getElementById('rp-eng').textContent    = r.isEng ? fNum(r.potEng) : fNum(r.potImpr);
 
-  // ── Gap card — two states ─────────────────────────────────────────────────
+  // Gap card
   const cardGap   = document.getElementById('card-gap');
   const rgTitle   = document.getElementById('rg-title');
   const rgBadge   = document.getElementById('rg-badge');
@@ -582,104 +556,87 @@ function updateCards(r) {
   const rgMetrics = document.getElementById('rg-metrics');
 
   if (r.targetExceeded) {
-    // Campaign already hit or surpassed the potential target → no opportunity
-    cardGap.className  = 'result-card exceeded';
-    rgTitle.className  = 'rc-title exceeded';
-    rgBadge.className  = 'rc-badge exceeded';
+    cardGap.className    = 'result-card exceeded';
+    rgTitle.className    = 'rc-title exceeded';
+    rgBadge.className    = 'rc-badge exceeded';
     rgTitle.textContent  = '✅ Target Already Exceeded';
     rgBadge.textContent  = 'Goal Met';
     rgBudget.className   = 'rc-main exceeded';
     rgBudget.textContent = fPct(r.penA);
-    rgSub.textContent    = `actual penetration (${fPct(r.penA)}) already meets or exceeds the ${fPct(r.penP)} potential target — no additional budget needed`;
+    rgSub.textContent    = `actual penetration already meets or exceeds the ${fPct(r.penP)} potential target`;
     rgMetrics.innerHTML  = `
       <div class="metric-item"><div class="ml">Actual vs Target</div><div class="mv" style="color:var(--green-light)">${fPct(r.penA)} / ${fPct(r.penP)}</div></div>
       <div class="metric-item"><div class="ml">Budget Efficiency</div><div class="mv" style="color:var(--green-light)">${fEur(r.budget)}</div></div>
       <div class="metric-item"><div class="ml">Users Reached</div><div class="mv">${fNum(r.actualUsers)}</div></div>
       <div class="metric-item"><div class="ml">Status</div><div class="mv" style="color:var(--green-light)">On Target ✓</div></div>`;
   } else {
-    // Normal scaling opportunity
-    cardGap.className  = 'result-card gap';
-    rgTitle.className  = 'rc-title gap';
-    rgBadge.className  = 'rc-badge gap';
+    cardGap.className    = 'result-card gap';
+    rgTitle.className    = 'rc-title gap';
+    rgBadge.className    = 'rc-badge gap';
     rgTitle.textContent  = '💡 Scaling Opportunity';
     rgBadge.textContent  = 'Missed';
     rgBudget.className   = 'rc-main gap';
+    // ── Show incremental gap (penA → cappedPot), NOT fresh-start gap ──
     rgBudget.textContent = r.budgetGap > 0 ? '+' + fEur(r.budgetGap) : '—';
-    rgSub.textContent    = 'additional budget would have unlocked';
+    rgSub.textContent    = `additional budget within this campaign would have unlocked`;
     rgMetrics.innerHTML  = `
       <div class="metric-item"><div class="ml">Add. Users</div><div class="mv">+${fNum(r.addUsers)}</div></div>
       <div class="metric-item"><div class="ml">Penetration Uplift</div><div class="mv">+${fPct(r.penGap)}</div></div>
       <div class="metric-item"><div class="ml">Add. ${engL}</div><div class="mv">+${fNum(r.isEng ? r.addEng : r.addImpr)}</div></div>
-      <div class="metric-item"><div class="ml">Budget Multiplier</div><div class="mv">${r.budgetMult > 0 ? r.budgetMult.toFixed(1)+'×' : '—'}</div></div>`;
+      <div class="metric-item"><div class="ml">Total If Scaled</div><div class="mv">${fEur(r.totalIfScaled)}</div></div>`;
   }
 
-  // Stats row
+  // Stats
   document.getElementById('stat-pen').textContent     = r.targetExceeded ? '✓ Met' : '+' + fPct(r.penGap);
   document.getElementById('stat-eng-lbl').textContent = 'Add. ' + r.cfg.engName;
   document.getElementById('stat-eng').textContent     = r.targetExceeded ? '—' : (r.isEng ? '+' + fNum(r.addEng) : '+' + fNum(r.addImpr));
   document.getElementById('stat-gap').textContent     = r.targetExceeded ? '€0' : (r.budgetGap > 0 ? '+' + fEur(r.budgetGap) : '—');
   document.getElementById('stat-eff-lbl').textContent = r.cfg.effLabel;
   document.getElementById('stat-eff').textContent     = fEur(r.effMetric, r.isEng ? 4 : 2) + (r.inflPct > 0 ? ' (+'+Math.round(r.inflPct)+'%)' : '');
-  document.getElementById('chart-section-title').textContent = '📊 Campaign Scale Analysis — ' + (activeTab === 'awareness' ? 'Awareness (CPM)' : activeTab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)');
+  document.getElementById('chart-section-title').textContent = '📊 Campaign Scale Analysis — ' +
+    (activeTab === 'awareness' ? 'Awareness (CPM)' : activeTab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)');
 }
 
-// ─── CHART RENDERING ──────────────────────────────────────────────────────────
-function updateChart(r) {
-  updateBars(r);
-  renderCPMCurve(r);
-}
+// ─── CHART ────────────────────────────────────────────────────────────────────
+function updateChart(r) { updateBars(r); renderCPMCurve(r); }
 
 function updateBars(r) {
-  const aFrac  = Math.max(0.04, r.penA / 100);
-  const aEmpty = 1 - aFrac;
+  const aFrac = Math.max(0.04, r.penA / 100), aEmpty = 1 - aFrac;
   document.getElementById('bar-actual-empty').style.flex        = aEmpty * 100;
   document.getElementById('bar-actual-filled').style.flex       = aFrac * 100;
   document.getElementById('bar-actual-filled').style.minHeight  = aFrac > 0.1 ? '50px' : '20px';
   document.getElementById('bar-actual-pct').textContent         = fPct(r.penA);
   document.getElementById('bar-actual-budget').textContent      = fEur(r.budget);
-  document.getElementById('bar-actual-empty').querySelector('span').textContent = aEmpty * 100 >= 15 ? (aEmpty*100).toFixed(0)+'% unreached' : '';
+  document.getElementById('bar-actual-empty').querySelector('span').textContent = aEmpty*100 >= 15 ? (aEmpty*100).toFixed(0)+'% unreached' : '';
 
-  const pFrac  = Math.max(0.04, r.penP / 100);
-  const pEmpty = 1 - pFrac;
+  const pFrac = Math.max(0.04, r.penP / 100), pEmpty = 1 - pFrac;
   document.getElementById('bar-pot-empty').style.flex        = pEmpty * 100;
   document.getElementById('bar-pot-filled').style.flex       = pFrac * 100;
   document.getElementById('bar-pot-filled').style.minHeight  = pFrac > 0.1 ? '50px' : '20px';
   document.getElementById('bar-pot-pct').textContent         = fPct(r.penP);
   document.getElementById('bar-pot-budget').textContent      = fEur(r.budgetNeeded);
-  document.getElementById('bar-pot-empty').querySelector('span').textContent = pEmpty * 100 >= 15 ? (pEmpty*100).toFixed(0)+'% unreached' : '';
+  document.getElementById('bar-pot-empty').querySelector('span').textContent = pEmpty*100 >= 15 ? (pEmpty*100).toFixed(0)+'% unreached' : '';
 
-  // Arrow badge — green check when exceeded, uplift otherwise
-  const upliftEl = document.getElementById('bar-uplift');
-  const arrowEl  = document.getElementById('bar-arrow-icon');
+  const uplift = document.getElementById('bar-uplift');
+  const arrow  = document.getElementById('bar-arrow-icon');
   if (r.targetExceeded) {
-    arrowEl.textContent  = '✓';
-    arrowEl.style.color  = 'var(--green-light)';
-    upliftEl.textContent = 'Goal Met';
-    upliftEl.style.background = 'rgba(67,160,71,0.15)';
-    upliftEl.style.borderColor = 'rgba(67,160,71,0.4)';
-    upliftEl.style.color = 'var(--green-light)';
+    arrow.textContent = '✓'; arrow.style.color = 'var(--green-light)';
+    uplift.textContent = 'Goal Met';
   } else {
-    arrowEl.textContent  = '→';
-    arrowEl.style.color  = 'var(--green-light)';
-    upliftEl.textContent = '+' + fPct(r.penGap);
-    upliftEl.style.background   = 'rgba(67,160,71,0.15)';
-    upliftEl.style.borderColor  = 'rgba(67,160,71,0.4)';
-    upliftEl.style.color = 'var(--green-light)';
+    arrow.textContent = '→'; arrow.style.color = 'var(--green-light)';
+    uplift.textContent = '+' + fPct(r.penGap);
   }
 }
 
 function renderCPMCurve(r) {
   const svg = document.getElementById('cpm-chart');
-  const W = 460, H = 240, PL = 52, PR = 16, PT = 16, PB = 38;
-  const cW = W - PL - PR, cH = H - PT - PB;
+  const W=460,H=240,PL=52,PR=16,PT=16,PB=38,cW=W-PL-PR,cH=H-PT-PB;
   const maxPen = Math.min(r.maxR + 5, 100);
   const pts = [];
-  for (let p = 0; p <= maxPen; p += 0.5) {
-    pts.push({ p, cpm: getEffectiveCPM(p, r.baseCPM, r.infl, r.thr, r.isEng) });
-  }
+  for (let p = 0; p <= maxPen; p += 0.5) pts.push({ p, cpm: getEffectiveCPM(p, r.baseCPM, r.infl, r.thr, r.isEng) });
   const maxCPM = Math.max(...pts.map(pt => pt.cpm)) * 1.08;
-  function tx(p)   { return PL + (p / maxPen) * cW; }
-  function ty(cpm) { return PT + cH - (cpm / maxCPM) * cH; }
+  const tx = p   => PL + (p / maxPen) * cW;
+  const ty = cpm => PT + cH - (cpm / maxCPM) * cH;
 
   let html = '';
   const xThr  = tx(Math.min(r.thr, maxPen));
@@ -689,19 +646,18 @@ function renderCPMCurve(r) {
   html += `<rect x="${xThr}" y="${PT}" width="${xInfl-xThr}" height="${cH}" fill="rgba(255,193,7,0.1)"/>`;
   html += `<rect x="${xInfl}" y="${PT}" width="${xMax-xInfl}" height="${cH}" fill="rgba(230,0,35,0.1)"/>`;
 
-  const dark = document.body.classList.contains('dark');
-  const gc = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)';
-  const ac = dark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.25)';
-  const tc = dark ? '#888' : '#999';
+  const dk = document.body.classList.contains('dark');
+  const gc = dk ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)';
+  const ac = dk ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.25)';
+  const tc = dk ? '#888' : '#999';
 
-  for (let i = 0; i <= 4; i++) {
-    const yy = PT + (cH / 4) * i;
+  for (let i=0;i<=4;i++) {
+    const yy = PT+(cH/4)*i, val = maxCPM*(1-i/4);
     html += `<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="${gc}" stroke-width="1"/>`;
-    const val = maxCPM * (1 - i/4);
     html += `<text x="${PL-6}" y="${yy+4}" text-anchor="end" font-size="9" fill="${tc}">€${val.toFixed(val<1?3:val<10?2:1)}</text>`;
   }
-  for (let p = 0; p <= maxPen; p += 20) {
-    const xx = tx(p);
+  for (let p=0;p<=maxPen;p+=20) {
+    const xx=tx(p);
     html += `<line x1="${xx}" y1="${PT}" x2="${xx}" y2="${PT+cH}" stroke="${gc}" stroke-width="1"/>`;
     html += `<text x="${xx}" y="${PT+cH+14}" text-anchor="middle" font-size="9" fill="${tc}">${p}%</text>`;
   }
@@ -715,74 +671,57 @@ function renderCPMCurve(r) {
   html += `<line x1="${xMaxR}" y1="${PT}" x2="${xMaxR}" y2="${PT+cH}" stroke="rgba(100,181,246,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
   html += `<text x="${xMaxR-3}" y="${PT+10}" text-anchor="end" font-size="8" fill="rgba(100,181,246,0.9)">Max</text>`;
 
-  const pathPts = pts.map((pt, i) => `${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.cpm).toFixed(1)}`).join(' ');
-  const areaPath = pathPts + ` L${tx(maxPen).toFixed(1)},${(PT+cH).toFixed(1)} L${tx(0).toFixed(1)},${(PT+cH).toFixed(1)} Z`;
+  const pp = pts.map((pt,i) => `${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.cpm).toFixed(1)}`).join(' ');
+  const ap = pp + ` L${tx(maxPen).toFixed(1)},${(PT+cH).toFixed(1)} L${tx(0).toFixed(1)},${(PT+cH).toFixed(1)} Z`;
   html += `<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E60023" stop-opacity="0.3"/><stop offset="100%" stop-color="#E60023" stop-opacity="0.02"/></linearGradient></defs>`;
-  html += `<path d="${areaPath}" fill="url(#cg)"/>`;
-  html += `<path d="${pathPts}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  html += `<path d="${ap}" fill="url(#cg)"/>`;
+  html += `<path d="${pp}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
 
   if (r.penA <= maxPen) {
-    const ax = tx(r.penA), ay = ty(getEffectiveCPM(r.penA, r.baseCPM, r.infl, r.thr, r.isEng));
-    html += `<circle cx="${ax}" cy="${ay}" r="6" fill="#ff9800" stroke="${dark?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
+    const ax=tx(r.penA), ay=ty(getEffectiveCPM(r.penA,r.baseCPM,r.infl,r.thr,r.isEng));
+    html += `<circle cx="${ax}" cy="${ay}" r="6" fill="#ff9800" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
     html += `<line x1="${ax}" y1="${ay+7}" x2="${ax}" y2="${PT+cH}" stroke="#ff9800" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>`;
   }
   if (r.penP <= maxPen) {
-    const px2 = tx(r.penP), py2 = ty(getEffectiveCPM(r.penP, r.baseCPM, r.infl, r.thr, r.isEng));
-    html += `<circle cx="${px2}" cy="${py2}" r="6" fill="#43a047" stroke="${dark?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
+    const px2=tx(r.penP), py2=ty(getEffectiveCPM(r.penP,r.baseCPM,r.infl,r.thr,r.isEng));
+    html += `<circle cx="${px2}" cy="${py2}" r="6" fill="#43a047" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
     html += `<line x1="${px2}" y1="${py2+7}" x2="${px2}" y2="${PT+cH}" stroke="#43a047" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>`;
   }
-
-  html += `<text x="${PL + cW/2}" y="${H-4}" text-anchor="middle" font-size="9" fill="${tc}" font-weight="600">Audience Penetration →</text>`;
-  html += `<text x="10" y="${PT + cH/2}" text-anchor="middle" font-size="9" fill="${tc}" font-weight="600" transform="rotate(-90 10 ${PT + cH/2})">${r.cfg.effLabel.replace('Eff. ','').replace(' at Target','')} →</text>`;
+  html += `<text x="${PL+cW/2}" y="${H-4}" text-anchor="middle" font-size="9" fill="${tc}" font-weight="600">Audience Penetration →</text>`;
+  html += `<text x="10" y="${PT+cH/2}" text-anchor="middle" font-size="9" fill="${tc}" font-weight="600" transform="rotate(-90 10 ${PT+cH/2})">${r.cfg.effLabel.replace('Eff. ','').replace(' at Target','')} →</text>`;
   svg.innerHTML = html;
 }
 
-// ─── RECOMMENDATION TEXT ─────────────────────────────────────────────────────
+// ─── RECOMMENDATION ───────────────────────────────────────────────────────────
 function updateRec(r) {
   const engN   = r.cfg.engName.toLowerCase();
   const tab    = activeTab;
   const effStr = fEur(r.effMetric, r.isEng ? 4 : 2) + (r.inflPct > 0 ? ` (+${Math.round(r.inflPct)}% above base rate)` : '');
-  const tabName = tab === 'awareness' ? 'Awareness (CPM)' : tab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)';
+  const tName  = tab === 'awareness' ? 'Awareness (CPM)' : tab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)';
 
-  let html = '';
-  html += `<p>Your <strong>${tabName}</strong> campaign successfully reached <strong>${fPct(r.penA)}</strong> of the potential audience (${fNum(r.actualUsers)} users) using a total budget of <strong>${fEur(r.budget)}</strong> over ${r.weeks} weeks at an average frequency of ${r.freq}× per week.</p>`;
+  let html = `<p>Your <strong>${tName}</strong> campaign successfully reached <strong>${fPct(r.penA)}</strong> of the potential audience (${fNum(r.actualUsers)} users) using a total budget of <strong>${fEur(r.budget)}</strong> over ${r.weeks} weeks at an average frequency of ${r.freq}× per week.</p>`;
 
   if (r.targetExceeded) {
-    // ── Exceeded state: positive messaging, no gap to flag ──────────────────
-    html += `<div class="rec-highlight green">✅ This campaign already met or exceeded the defined penetration potential of <strong>${fPct(r.penP)}</strong>. The actual penetration of <strong>${fPct(r.penA)}</strong> means the campaign was well-scaled and no additional budget would have been needed to reach the target.</div>`;
-    html += `<p><strong>Recommendation for the next campaign flight:</strong> The current budget and setup proved effective. For future flights, consider raising the penetration potential target above <strong>${fPct(r.penA)}</strong> to identify new scaling headroom, or maintain the same parameters to deliver consistent audience reach.</p>`;
+    html += `<div class="rec-highlight green">✅ This campaign already met or exceeded the defined penetration potential of <strong>${fPct(r.penP)}</strong>. With <strong>${fPct(r.penA)}</strong> penetration achieved, no additional budget was needed — the campaign was well-scaled to its target ceiling.</div>`;
+    html += `<p><strong>Recommendation for the next campaign flight:</strong> The current setup proved effective. Consider raising the penetration potential target above <strong>${fPct(r.penA)}</strong> to identify new scaling headroom, or maintain the same parameters to deliver consistent audience reach.</p>`;
   } else {
-    html += `<div class="rec-highlight">Based on the audience size of ${fNum(r.aud)} and the campaign parameters, the safe scaling potential for this campaign was <strong>${fPct(r.penP)}</strong> penetration — ${fNum(r.potUsers)} unique users. At this level, the effective ${r.isEng ? r.cfg.effLabel.replace('Eff. ','').replace(' at Target','') : 'CPM'} would have been ${effStr}, remaining within an acceptable cost efficiency range.</div>`;
-    html += `<p>To reach the <strong>${fPct(r.penP)} penetration</strong> target, a total campaign budget of <strong>${fEur(r.budgetNeeded)}</strong> would have been required — an increase of <strong>+${fEur(r.budgetGap)}</strong> (${r.budgetMult.toFixed(1)}× the actual budget). This would have delivered an additional <strong>${fNum(r.addUsers)} users</strong> and <strong>+${fNum(r.isEng ? r.addEng : r.addImpr)} ${engN}</strong> compared to the delivered campaign.</p>`;
-    html += `<p><strong>Recommendation for the next campaign flight:</strong> Plan with a total budget of <strong>${fEur(r.budgetNeeded)}</strong> targeting <strong>${fPct(r.penP)} audience penetration</strong>. Keep weekly frequency at ${r.freq}× over a ${r.weeks}-week flight. This keeps the campaign within a ${r.safeZone === 'safe' ? 'cost-efficient safe zone' : r.safeZone === 'warn' ? 'moderate inflation zone' : 'elevated but manageable cost range'} and maximises ${tab === 'awareness' ? 'brand awareness reach' : tab === 'video' ? 'video completion impact' : 'qualified consideration traffic'} for the audience.</p>`;
+    html += `<div class="rec-highlight">Based on the audience size of ${fNum(r.aud)} and the campaign parameters, the safe scaling potential for this campaign was <strong>${fPct(r.penP)}</strong> penetration — ${fNum(r.potUsers)} unique users. At this level, the effective ${r.isEng ? r.cfg.effLabel.replace('Eff. ','').replace(' at Target','') : 'CPM'} would have been ${effStr}.</div>`;
+    html += `<p>Reaching from the actual <strong>${fPct(r.penA)}</strong> to the target <strong>${fPct(r.penP)}</strong> within this same campaign would have required an additional <strong>${fEur(r.budgetGap)}</strong> — bringing the total campaign spend to <strong>${fEur(r.totalIfScaled)}</strong>. This would have delivered an additional <strong>${fNum(r.addUsers)} users</strong> and <strong>+${fNum(r.isEng ? r.addEng : r.addImpr)} ${engN}</strong>.</p>`;
+    html += `<p><strong>Recommendation for the next campaign flight:</strong> Plan a full future campaign with a budget of <strong>${fEur(r.budgetNeeded)}</strong> targeting <strong>${fPct(r.penP)} audience penetration</strong> at ${r.freq}× weekly frequency over ${r.weeks} weeks. This keeps the campaign within a ${r.safeZone === 'safe' ? 'cost-efficient safe zone' : r.safeZone === 'warn' ? 'moderate inflation zone' : 'elevated but manageable cost range'} and maximises ${tab === 'awareness' ? 'brand awareness reach' : tab === 'video' ? 'video completion impact' : 'qualified consideration traffic'}.</p>`;
   }
-
   document.getElementById('rec-body').innerHTML = html;
 }
 
-// ─── TAB / THEME / ADV ────────────────────────────────────────────────────────
+// ─── TAB / THEME / ADV ───────────────────────────────────────────────────────
 function switchTab(t) {
-  saveTabData();
-  activeTab = t;
+  saveTabData(); activeTab = t;
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
-  loadTabData();
-  updateTabUI();
-  calculate();
+  loadTabData(); updateTabUI(); calculate();
 }
 function saveTabData() {
-  ['audienceSize','budgetUsed'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) tabData[activeTab][id] = el.value.replace(/,/g,'');
-  });
-  ['metric1','metric2','weeks','frequency','penReached','penPotential'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) tabData[activeTab][id] = el.value;
-  });
-  ['adv-threshold','adv-inflation','adv-maxreach'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    const key = ['threshold','inflation','maxreach'][i];
-    if (el) tabData[activeTab][key] = el.value;
-  });
+  ['audienceSize','budgetUsed'].forEach(id => { const el=document.getElementById(id); if(el) tabData[activeTab][id]=el.value.replace(/,/g,''); });
+  ['metric1','metric2','weeks','frequency','penReached','penPotential'].forEach(id => { const el=document.getElementById(id); if(el) tabData[activeTab][id]=el.value; });
+  ['adv-threshold','adv-inflation','adv-maxreach'].forEach((id,i) => { const el=document.getElementById(id); const key=['threshold','inflation','maxreach'][i]; if(el) tabData[activeTab][key]=el.value; });
 }
 function loadTabData() {
   const d = tabData[activeTab];
@@ -804,12 +743,8 @@ function updateTabUI() {
   document.getElementById('m1-hint').textContent  = cfg.m1Hint;
   document.getElementById('metric1').placeholder  = cfg.m1Ph;
   const m2f = document.getElementById('m2-field');
-  if (cfg.m2) {
-    m2f.classList.remove('hidden');
-    document.getElementById('m2-label').textContent = cfg.m2Label;
-    document.getElementById('m2-hint').textContent  = cfg.m2Hint;
-    document.getElementById('metric2').placeholder  = cfg.m2Ph;
-  } else { m2f.classList.add('hidden'); }
+  if (cfg.m2) { m2f.classList.remove('hidden'); document.getElementById('m2-label').textContent=cfg.m2Label; document.getElementById('m2-hint').textContent=cfg.m2Hint; document.getElementById('metric2').placeholder=cfg.m2Ph; }
+  else m2f.classList.add('hidden');
   const isEng = activeTab !== 'awareness';
   document.getElementById('adv-threshold').placeholder = isEng ? '20' : '30';
   document.getElementById('adv-inflation').placeholder = isEng ? '300' : '50';
@@ -830,8 +765,7 @@ function toggleTheme() {
   if (lastResult) renderCPMCurve(lastResult);
 }
 function copyRec() {
-  const body = document.getElementById('rec-body');
-  const text = body ? body.innerText : '';
+  const text = document.getElementById('rec-body')?.innerText || '';
   navigator.clipboard.writeText(text).then(() => {
     const ok = document.getElementById('rec-copy-ok');
     ok.classList.remove('hidden');
@@ -843,5 +777,6 @@ document.addEventListener('DOMContentLoaded', () => { updateTabUI(); calculate()
 </script>
 </body>
 </html>
+
 
 
