@@ -34,6 +34,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
 .field input:focus{outline:none;border-color:var(--red)}
 .field .hint{font-size:0.68rem;color:var(--text-3);margin-top:0.2rem}
 .field .derived{font-size:0.72rem;font-weight:600;margin-top:0.25rem;color:var(--red)}
+.field .derived.blue{color:var(--blue)}
 .adv-toggle{width:100%;background:none;border:none;color:var(--text-2);font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0 0}
 .adv-body{margin-top:0.75rem;padding:1rem;background:var(--input-bg);border-radius:0.75rem;border:1px solid var(--border);display:flex;flex-direction:column;gap:0.75rem}
 .adv-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem}
@@ -46,25 +47,19 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
 .result-card.exceeded{background:linear-gradient(135deg,rgba(67,160,71,0.12),rgba(67,160,71,0.06));border-color:rgba(67,160,71,0.4)}
 .rc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .rc-title{font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em}
-.rc-title.actual{color:var(--orange)}
-.rc-title.potential{color:var(--green-light)}
-.rc-title.gap{color:var(--red)}
-.rc-title.exceeded{color:var(--green-light)}
+.rc-title.actual{color:var(--orange)}.rc-title.potential{color:var(--green-light)}.rc-title.gap{color:var(--red)}.rc-title.exceeded{color:var(--green-light)}
 .rc-badge{font-size:0.7rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:9999px}
-.rc-badge.actual{background:rgba(255,152,0,0.2);color:var(--orange)}
-.rc-badge.potential{background:rgba(67,160,71,0.2);color:var(--green-light)}
-.rc-badge.gap{background:rgba(230,0,35,0.15);color:var(--red)}
-.rc-badge.exceeded{background:rgba(67,160,71,0.2);color:var(--green-light)}
+.rc-badge.actual{background:rgba(255,152,0,0.2);color:var(--orange)}.rc-badge.potential{background:rgba(67,160,71,0.2);color:var(--green-light)}.rc-badge.gap{background:rgba(230,0,35,0.15);color:var(--red)}.rc-badge.exceeded{background:rgba(67,160,71,0.2);color:var(--green-light)}
+.rc-badge.safe{background:rgba(67,160,71,0.2);color:var(--green-light)}.rc-badge.warn{background:rgba(255,193,7,0.2);color:#ffc107}.rc-badge.danger{background:rgba(230,0,35,0.15);color:var(--red)}
 .rc-main{font-size:2rem;font-weight:900;line-height:1;margin-bottom:0.25rem}
-.rc-main.actual{color:var(--orange)}
-.rc-main.potential{color:var(--green-light)}
-.rc-main.gap{color:var(--red)}
-.rc-main.exceeded{color:var(--green-light)}
+.rc-main.actual{color:var(--orange)}.rc-main.potential{color:var(--green-light)}.rc-main.gap{color:var(--red)}.rc-main.exceeded{color:var(--green-light)}
 .rc-sub{font-size:0.78rem;color:var(--text-2);margin-bottom:0.875rem}
 .rc-metrics{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .metric-item{background:var(--input-bg);border:1px solid var(--border);border-radius:0.5rem;padding:0.5rem 0.65rem}
 .metric-item .ml{font-size:0.65rem;color:var(--text-3);font-weight:600;text-transform:uppercase;margin-bottom:0.2rem}
 .metric-item .mv{font-size:0.9rem;font-weight:700;color:var(--text)}
+.budget-note{font-size:0.62rem;color:var(--text-3);margin-top:0.25rem;line-height:1.4;font-style:italic}
+.reality-anchor-tag{display:inline-flex;align-items:center;gap:0.3rem;font-size:0.65rem;font-weight:700;color:var(--blue);background:rgba(66,165,245,0.12);border:1px solid rgba(66,165,245,0.3);border-radius:9999px;padding:0.2rem 0.5rem;margin-top:0.6rem}
 .placeholder{text-align:center;padding:2rem 1rem;color:var(--text-3)}
 .placeholder .pi{font-size:2.5rem;margin-bottom:0.75rem}
 .placeholder p{font-size:0.85rem;line-height:1.5}
@@ -77,26 +72,36 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
 .pen-bar-col{width:80px;height:260px;border-radius:0.875rem;overflow:hidden;border:3px solid transparent;display:flex;flex-direction:column;position:relative}
 .pen-bar-col.actual{border-color:var(--orange);box-shadow:0 6px 24px rgba(255,152,0,0.3)}
 .pen-bar-col.potential{border-color:var(--green-light);box-shadow:0 6px 24px rgba(67,160,71,0.3)}
-.bar-empty{background:var(--input-bg);display:flex;align-items:center;justify-content:center}
+.bar-empty{background:var(--input-bg);display:flex;align-items:center;justify-content:center;transition:flex 0.7s cubic-bezier(0.34,1.56,0.64,1)}
 .bar-empty span{font-size:0.7rem;color:var(--text-3);font-weight:600;writing-mode:vertical-rl;transform:rotate(180deg)}
-.bar-filled{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.bar-filled{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:flex 0.7s cubic-bezier(0.34,1.56,0.64,1)}
 .bar-filled .pct{font-size:1.2rem;font-weight:900;color:#fff}
 .bar-filled .lbl{font-size:0.55rem;font-weight:700;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.04em;text-align:center}
 .pen-bar-name{font-size:0.8rem;font-weight:700;text-align:center}
-.pen-bar-budget{font-size:1rem;font-weight:900;text-align:center;color:var(--text)}
+.pen-bar-budget{font-size:1rem;font-weight:900;text-align:center;color:var(--text);transition:color 0.3s}
 .pen-arrow{display:flex;flex-direction:column;align-items:center;gap:0.5rem;padding-bottom:2.5rem}
 .pen-arrow .arr{font-size:1.75rem;color:var(--green-light)}
 .pen-arrow .uplift{background:rgba(67,160,71,0.15);border:1px solid rgba(67,160,71,0.4);border-radius:9999px;padding:0.25rem 0.6rem;font-size:0.7rem;font-weight:700;color:var(--green-light)}
 .curve-wrap{position:relative;width:100%}
 .curve-wrap svg{width:100%;display:block}
+@keyframes drawCurve{from{stroke-dashoffset:var(--path-len,1200)}to{stroke-dashoffset:0}}
+@keyframes popIn{0%{opacity:0;transform:scale(0)}60%{transform:scale(1.35)}100%{opacity:1;transform:scale(1)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.curve-path-solid{stroke-dasharray:var(--path-len,1200);stroke-dashoffset:var(--path-len,1200);animation:drawCurve 0.9s cubic-bezier(0.22,1,0.36,1) forwards}
+.curve-path-dash{stroke-dasharray:7 3;opacity:0;animation:fadeInUp 0.4s ease 0.85s forwards}
+.curve-dot{opacity:0;transform-origin:center;animation:popIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards}
+.curve-dot-orange{animation-delay:0.75s}
+.curve-dot-green{animation-delay:0.95s}
 .curve-legend{display:flex;gap:1rem;flex-wrap:wrap;margin-top:0.75rem;justify-content:center}
 .cl-item{display:flex;align-items:center;gap:0.35rem;font-size:0.72rem;color:var(--text-2)}
 .cl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-top:1.5rem}
 @media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr}}
-.stat-box{background:var(--input-bg);border:2px solid var(--border);border-radius:0.75rem;padding:1rem;text-align:center}
+.stat-box{background:var(--input-bg);border:2px solid var(--border);border-radius:0.75rem;padding:1rem;text-align:center;transition:border-color 0.3s,box-shadow 0.3s}
+.stat-box:hover{border-color:var(--red);box-shadow:0 4px 16px rgba(230,0,35,0.15)}
 .stat-box .sl{font-size:0.65rem;color:var(--text-3);font-weight:700;text-transform:uppercase;margin-bottom:0.35rem}
 .stat-box .sv{font-size:1.35rem;font-weight:900}
+.stat-box .sn{font-size:0.6rem;color:var(--text-3);margin-top:0.2rem;font-style:italic}
 .rec-section{margin-top:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:1rem;padding:1.5rem}
 .rec-section-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
 .rec-body{color:var(--text-2);font-size:0.88rem;line-height:1.8}
@@ -104,12 +109,13 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
 .rec-body strong{color:var(--text);font-weight:700}
 .rec-highlight{background:linear-gradient(135deg,rgba(230,0,35,0.08),rgba(230,0,35,0.04));border-left:3px solid var(--red);padding:0.875rem 1rem;border-radius:0 0.5rem 0.5rem 0;margin:1rem 0;font-size:0.85rem;line-height:1.6;color:var(--text-2)}
 .rec-highlight.green{background:linear-gradient(135deg,rgba(67,160,71,0.1),rgba(67,160,71,0.04));border-left-color:var(--green-light)}
+.rec-highlight.blue{background:linear-gradient(135deg,rgba(66,165,245,0.1),rgba(66,165,245,0.04));border-left-color:var(--blue)}
 .copy-btn{padding:0.4rem 0.875rem;background:var(--input-bg);border:1px solid var(--border);border-radius:0.5rem;cursor:pointer;font-size:0.75rem;color:var(--text-2);font-weight:600}
 .copy-ok{color:var(--green-light);font-size:0.78rem;font-weight:600;padding:0.4rem 0.875rem}
 .hidden{display:none!important}
-
-/* info tooltip on potential card budget */
-.budget-note{font-size:0.65rem;color:var(--text-3);margin-top:0.35rem;line-height:1.4;font-style:italic}
+.svg-tooltip{position:fixed;pointer-events:none;background:var(--card);border:1px solid var(--border);border-radius:0.5rem;padding:0.45rem 0.7rem;font-size:0.72rem;color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,0.3);z-index:999;opacity:0;transition:opacity 0.15s;white-space:nowrap}
+.svg-tooltip.visible{opacity:1}
+.svg-tooltip strong{color:var(--red)}
 </style>
 </head>
 <body class="dark">
@@ -143,7 +149,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
   <div class="main-grid">
     <div class="panel">
       <div class="panel-title">
-        <div class="icon" id="panel-icon">📋</div>
+        <div class="icon">📋</div>
         <span id="panel-title-text">Campaign Parameters</span>
       </div>
       <div class="field">
@@ -166,6 +172,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <label>💵 Budget Used (€)</label>
         <input type="text" id="budgetUsed" placeholder="e.g., 45,000" oninput="handleNum(this);calculate()">
         <div class="hint">Total budget spent on this campaign</div>
+        <div class="derived blue hidden" id="derived-avg-metric"></div>
       </div>
       <div class="field">
         <label>📅 Campaign Duration (weeks)</label>
@@ -195,22 +202,22 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
           <span id="adv-arrow">▶ show</span>
         </button>
         <div class="adv-body hidden" id="adv-body">
-          <div style="font-size:0.75rem;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em">CPM Inflation Parameters</div>
+          <div style="font-size:0.75rem;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em">Inflation Parameters</div>
           <div class="adv-row">
             <div class="field" style="margin:0">
-              <label id="adv-thr-lbl">Threshold (%)</label>
-              <input type="text" id="adv-threshold" placeholder="30" oninput="handleDec(this);calculate()">
-              <div class="hint">Inflation starts here</div>
+              <label id="adv-thr-lbl">Inflation Threshold (%)</label>
+              <input type="text" id="adv-threshold" placeholder="30" oninput="handleAdv(this,'threshold')">
+              <div class="hint">Curve stays flat until here</div>
             </div>
             <div class="field" style="margin:0">
               <label id="adv-infl-lbl">Inflation Rate (%)</label>
-              <input type="text" id="adv-inflation" placeholder="50" oninput="handleDec(this);calculate()">
-              <div class="hint" id="adv-infl-hint">At inflation point</div>
+              <input type="text" id="adv-inflation" placeholder="50" oninput="handleAdv(this,'inflation')">
+              <div class="hint" id="adv-infl-hint">Cost increase at inflection point</div>
             </div>
             <div class="field" style="margin:0">
               <label>Max Reachable (%)</label>
-              <input type="text" id="adv-maxreach" placeholder="85" oninput="handleDec(this);calculate()">
-              <div class="hint">Platform ceiling</div>
+              <input type="text" id="adv-maxreach" placeholder="85" oninput="handleAdv(this,'maxreach')">
+              <div class="hint">Chart &amp; audience ceiling</div>
             </div>
           </div>
         </div>
@@ -234,7 +241,13 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
           <div class="metric-item"><div class="ml">Budget Used</div><div class="mv" id="ra-budget">—</div></div>
           <div class="metric-item"><div class="ml">Users Reached</div><div class="mv" id="ra-users">—</div></div>
           <div class="metric-item"><div class="ml" id="ra-imp-lbl">Impressions</div><div class="mv" id="ra-impr">—</div></div>
-          <div class="metric-item"><div class="ml" id="ra-eng-lbl">Engagements</div><div class="mv" id="ra-eng">—</div></div>
+          <div class="metric-item">
+            <div class="ml" id="ra-avgcost-lbl">Avg. CPM (Real)</div>
+            <div class="mv" id="ra-avgcost" style="color:var(--blue)">—</div>
+          </div>
+        </div>
+        <div class="reality-anchor-tag hidden" id="reality-check-tag">
+          <span>📍</span><span id="reality-check-txt"></span>
         </div>
       </div>
 
@@ -264,11 +277,9 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         </div>
         <div class="rc-main gap" id="rg-budget">—</div>
         <div class="rc-sub" id="rg-sub">additional budget within this campaign would have unlocked</div>
-        <div class="rc-metrics" id="rg-metrics">
-          <div class="metric-item"><div class="ml">Add. Users</div><div class="mv" id="rg-users">—</div></div>
-          <div class="metric-item"><div class="ml">Penetration Uplift</div><div class="mv" id="rg-pen">—</div></div>
-          <div class="metric-item"><div class="ml" id="rg-eng-lbl">Add. Engagements</div><div class="mv" id="rg-eng">—</div></div>
-          <div class="metric-item"><div class="ml">Total if Scaled</div><div class="mv" id="rg-total">—</div></div>
+        <div class="rc-metrics" id="rg-metrics"></div>
+        <div class="reality-anchor-tag hidden" id="compression-tag">
+          <span>🗜️</span><span id="compression-tag-txt"></span>
         </div>
       </div>
     </div>
@@ -281,7 +292,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <div style="font-size:0.78rem;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.05em">Audience Penetration</div>
         <div class="pen-bars">
           <div class="pen-bar-wrap">
-            <div class="pen-bar-col actual" id="bar-actual-col">
+            <div class="pen-bar-col actual">
               <div class="bar-empty" id="bar-actual-empty" style="flex:1"><span id="bar-actual-empty-txt"></span></div>
               <div class="bar-filled" id="bar-actual-filled" style="background:linear-gradient(180deg,#ffa726,#f57c00,#e65100)">
                 <div class="pct" id="bar-actual-pct">0%</div>
@@ -296,7 +307,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
             <div class="uplift" id="bar-uplift">+0%</div>
           </div>
           <div class="pen-bar-wrap">
-            <div class="pen-bar-col potential" id="bar-pot-col">
+            <div class="pen-bar-col potential">
               <div class="bar-empty" id="bar-pot-empty" style="flex:1"><span id="bar-pot-empty-txt"></span></div>
               <div class="bar-filled" id="bar-pot-filled" style="background:linear-gradient(180deg,#81c784,#43a047,#2e7d32)">
                 <div class="pct" id="bar-pot-pct">0%</div>
@@ -308,9 +319,10 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
           </div>
         </div>
       </div>
-      <div class="curve-wrap">
-        <div style="font-size:0.78rem;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em" id="curve-title">CPM Scaling Curve</div>
-        <svg id="cpm-chart" viewBox="0 0 460 240" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="curve-wrap" id="curve-wrap">
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text-2);text-align:center;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em" id="curve-title">Scaling Curve</div>
+        <svg id="cpm-chart" viewBox="0 0 460 240" xmlns="http://www.w3.org/2000/svg"
+             onmousemove="chartMouseMove(event)" onmouseleave="chartMouseLeave()"></svg>
         <div class="curve-legend">
           <div class="cl-item"><div class="cl-dot" style="background:rgba(67,160,71,0.5)"></div>Safe zone</div>
           <div class="cl-item"><div class="cl-dot" style="background:rgba(255,193,7,0.5)"></div>Inflation zone</div>
@@ -332,10 +344,13 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
       <div class="stat-box">
         <div class="sl">Incremental Budget Gap</div>
         <div class="sv" id="stat-gap" style="color:var(--red)">—</div>
+        <div class="sn" id="stat-gap-note"></div>
       </div>
       <div class="stat-box">
-        <div class="sl" id="stat-eff-lbl">Eff. CPM at Target</div>
-        <div class="sv" id="stat-eff" style="color:var(--orange)">—</div>
+        <div class="sl" id="stat-eff-lbl">Eff. Cost at Target</div>
+        <!-- FIX 2: colour changed from var(--orange) → var(--green-light) to match green dot -->
+        <div class="sv" id="stat-eff" style="color:var(--green-light)">—</div>
+        <div class="sn" id="stat-eff-note"></div>
       </div>
     </div>
   </div>
@@ -353,66 +368,117 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
 
 </div>
 
+<div class="svg-tooltip" id="svg-tooltip"></div>
+
 <script>
 let isDark = true;
 let activeTab = 'awareness';
 let showAdv = false;
 let lastResult = null;
 
+const C = { W:460, H:240, PL:56, PR:16, PT:16, PB:38 };
+
 const tabData = {
   awareness:     { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'30', inflation:'50', maxreach:'85' },
-  video:         { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'300', maxreach:'75' },
-  consideration: { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'300', maxreach:'75' }
+  video:         { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'80', maxreach:'85' },
+  consideration: { audienceSize:'', metric1:'', metric2:'', budgetUsed:'', weeks:'', frequency:'', penReached:'', penPotential:'', threshold:'20', inflation:'80', maxreach:'85' }
 };
+
 const tabConfigs = {
-  awareness:     { m1Label:'💰 Base CPM (€)', m1Hint:'Cost per 1,000 impressions', m1Ph:'e.g., 14.50', m2:false, engName:'Impressions', effLabel:'Eff. CPM at Target', inflPt:50 },
-  video:         { m1Label:'🎬 Base CPCV95% (€)', m1Hint:'Cost per completed view at 95%', m1Ph:'e.g., 0.05', m2:true, m2Label:'📊 VTR95% (%)', m2Hint:'View-through rate at 95%', m2Ph:'e.g., 60', engName:'Video Views', effLabel:'Eff. CPCV at Target', inflPt:40 },
-  consideration: { m1Label:'🖱️ Base CPC (€)', m1Hint:'Cost per click', m1Ph:'e.g., 0.45', m2:true, m2Label:'📊 CTR (%)', m2Hint:'Click-through rate', m2Ph:'e.g., 1.2', engName:'Pin Clicks', effLabel:'Eff. CPC at Target', inflPt:40 }
+  awareness:     { m1Label:'💰 Base CPM (€)',     m1Hint:'Cost per 1,000 impressions',     m1Ph:'e.g., 14.50', m2:false, engName:'Impressions', effLabel:'Eff. CPM at Target',  inflPt:50 },
+  video:         { m1Label:'🎬 Base CPCV95% (€)', m1Hint:'Cost per completed view at 95%', m1Ph:'e.g., 0.05',  m2:true,  m2Label:'📊 VTR95% (%)', m2Hint:'View-through rate at 95%', m2Ph:'e.g., 60', engName:'Video Views', effLabel:'Eff. CPCV at Target', inflPt:40 },
+  consideration: { m1Label:'🖱️ Base CPC (€)',     m1Hint:'Cost per click',                 m1Ph:'e.g., 0.45',  m2:true,  m2Label:'📊 CTR (%)',    m2Hint:'Click-through rate',      m2Ph:'e.g., 1.2', engName:'Pin Clicks',  effLabel:'Eff. CPC at Target',  inflPt:40 }
 };
 
-function fNum(n) {
-  if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
-  if (n >= 1e6) return (n/1e6).toFixed(2)+'M';
-  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
-  return Math.round(n).toLocaleString('en-US');
-}
-function fEur(n, dec=0) { return '€' + n.toLocaleString('en-US', { minimumFractionDigits:dec, maximumFractionDigits:dec }); }
-function fPct(n) { return n.toFixed(1) + '%'; }
-function handleNum(el) {
-  const raw = el.value.replace(/,/g,'');
-  if (raw === '' || !isNaN(raw)) { tabData[activeTab][el.id] = raw; el.value = raw ? parseFloat(raw).toLocaleString('en-US') : ''; }
-}
-function handleDec(el) {
-  const v = el.value;
-  if (v === '' || /^[0-9]*\.?[0-9]*$/.test(v)) { tabData[activeTab][el.id] = v; }
-  else { el.value = tabData[activeTab][el.id] || ''; }
+function fNum(n){if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.round(n).toLocaleString('en-US');}
+function fEur(n,dec=0){return'€'+n.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
+function fPct(n){return n.toFixed(1)+'%';}
+function handleNum(el){const raw=el.value.replace(/,/g,'');if(raw===''||!isNaN(raw)){tabData[activeTab][el.id]=raw;el.value=raw?parseFloat(raw).toLocaleString('en-US'):'';}}
+function handleDec(el){const v=el.value;if(v===''||/^[0-9]*\.?[0-9]*$/.test(v)){tabData[activeTab][el.id]=v;}else{el.value=tabData[activeTab][el.id]||'';}}
+function handleAdv(el,key){const v=el.value;if(v===''||/^[0-9]*\.?[0-9]*$/.test(v)){tabData[activeTab][key]=v;calculate();}else{el.value=tabData[activeTab][key]||'';}}
+
+// ─── DISPLAY UNIT CONVERSION ──────────────────────────────────────────────────
+function cpmToDisplay(cpm, m2, isEng) {
+  if (isEng && m2 > 0) return cpm / (m2 * 10);
+  return cpm;
 }
 
-// ─── CALC ENGINE ──────────────────────────────────────────────────────────────
+// ─── COST CURVE ───────────────────────────────────────────────────────────────
+//
+// FIX 1: Curve is now FLAT at baseCPM for pen ≤ threshold.
+//
+// Previous behaviour: the curve used t = pen/inflPt, which produced tiny but
+// non-zero inflation from pen=0 because gentle = t^1.5 > 0 for any t > 0.
+// The threshold only biased the sigmoid blend weight — it was not a hard floor.
+//
+// New behaviour:
+//   • pen ≤ threshold  → return baseCPM exactly (zero inflation)
+//   • pen > threshold  → rescale t = (pen - threshold) / (inflPt - threshold)
+//     so t=0 at threshold and t=1 at inflPt, guaranteeing continuity.
+//   • sigmoid now centred at t=1 (the inflection point on the new scale),
+//     blending gentle (t^1.5) → steep (t^3) smoothly past the inflection.
+//   • At t=1: gentle=1, steep=1 → cost = baseCPM*(1+inflRate/100) ✓
+//   • At t=0: gentle=0, steep=0 → cost = baseCPM ✓ (continuous at threshold)
+//
 function getEffectiveCPM(pen, baseCPM, inflRate, threshold, isEng) {
-  if (baseCPM <= 0 || pen < threshold) return baseCPM;
-  const a = pen - threshold;
-  const inflPt = isEng ? 40 : 50;
-  if (pen <= inflPt) return baseCPM * (1 + (a / (inflPt - threshold)) * inflRate / 100);
-  const s = (pen - inflPt) / 10;
-  return isEng
-    ? baseCPM * (1 + inflRate/100 + (Math.pow(1.8, s) - 1) * 1.5)
-    : baseCPM * (1 + inflRate/100 + Math.pow(s, 2) * 0.15);
+  if (baseCPM <= 0) return baseCPM;
+  if (pen <= 0)     return baseCPM;
+
+  // Hard flat floor below threshold — no inflation at all
+  if (pen <= threshold) return baseCPM;
+
+  const inflPt  = isEng ? 40 : 50;
+
+  // Rescale so t=0 at threshold, t=1 at inflPt
+  // Guard: if threshold >= inflPt, treat entire range as steep
+  const tRange  = Math.max(inflPt - threshold, 0.1);
+  const t       = (pen - threshold) / tRange;
+
+  // Sigmoid centred at t=1 (inflection point): transitions gentle → steep
+  const w       = 1 / (1 + Math.exp(-6 * (t - 1)));
+
+  const gentle  = Math.pow(t, 1.5); // sub-quadratic: gradual climb just above threshold
+  const steep   = Math.pow(t, 3);   // cubic: aggressive well past inflection
+
+  const blended = (1 - w) * gentle + w * steep;
+  return baseCPM * (1 + (inflRate / 100) * blended);
 }
+
 function getNaturalFrequency(pen, weeks, threshold) {
   const base = weeks <= 2 ? 4 : weeks <= 4 ? 3.5 : weeks <= 8 ? 2.5 : weeks <= 12 ? 2 : 1.5;
   if (pen < threshold) return base;
   return base * (1 - Math.pow((pen - threshold) / (100 - threshold), 1.5) * 0.6);
 }
+
+// ─── FULL CAMPAIGN BUDGET (0% → target) ─────────────────────────────────────
 function calcBudgetNeeded(startPen, targetPen, freq, aud, weeks, baseCPM, inflRate, threshold, isEng) {
   if (targetPen <= startPen || baseCPM <= 0 || targetPen <= 0) return 0;
   let total = 0;
   for (let p = startPen; p < targetPen; p += 0.5) {
-    const eCPM  = getEffectiveCPM(p, baseCPM, inflRate, threshold, isEng);
-    const natF  = getNaturalFrequency(p, weeks, threshold);
-    const prem  = freq > natF ? 1 + (freq / natF - 1) * 0.5 : 1;
-    const incP  = Math.min(0.5, targetPen - p);
+    const eCPM = getEffectiveCPM(p, baseCPM, inflRate, threshold, isEng);
+    const natF = getNaturalFrequency(p, weeks, threshold);
+    const prem = freq > natF ? 1 + (freq / natF - 1) * 0.5 : 1;
+    const incP = Math.min(0.5, targetPen - p);
     total += (aud * incP / 100 * freq * weeks / 1000) * eCPM * prem;
+  }
+  return total;
+}
+
+// ─── REALITY-ANCHORED COMPRESSED GAP BUDGET ─────────────────────────────────
+function calcBudgetGapCompressed(penA, targetPen, freq, aud, weeks, actualAvgCPM, baseCPM, inflRate, threshold, maxReach, isEng) {
+  if (targetPen <= penA || actualAvgCPM <= 0 || aud <= 0 || baseCPM <= 0) return 0;
+  const cf      = Math.min(10, maxReach / Math.max(maxReach - penA, 0.5));
+  const tAtPenA = Math.max(getEffectiveCPM(penA, baseCPM, inflRate, threshold, isEng), 0.0001);
+  const gapSize = targetPen - penA;
+  let total = 0;
+  for (let relP = 0; relP < gapSize; relP += 0.5) {
+    const mappedPen     = penA + relP * cf;
+    const theorAtMapped = getEffectiveCPM(mappedPen, baseCPM, inflRate, threshold, isEng);
+    const realCostHere  = actualAvgCPM * (theorAtMapped / tAtPenA);
+    const natF          = getNaturalFrequency(penA + relP, weeks, threshold);
+    const prem          = freq > natF ? 1 + (freq / natF - 1) * 0.5 : 1;
+    const incP          = Math.min(0.5, gapSize - relP);
+    total += (aud * incP / 100 * freq * weeks / 1000) * realCostHere * prem;
   }
   return total;
 }
@@ -424,21 +490,20 @@ function calculate() {
   const d     = tabData[activeTab];
 
   const aud    = parseFloat(d.audienceSize) || 0;
-  const m1     = parseFloat(d.metric1) || 0;
-  const m2     = parseFloat(d.metric2) || 0;
-  const budget = parseFloat(d.budgetUsed) || 0;
-  const weeks  = parseFloat(d.weeks) || 0;
-  const freq   = parseFloat(d.frequency) || 0;
-  const penA   = parseFloat(d.penReached) || 0;
+  const m1     = parseFloat(d.metric1)      || 0;
+  const m2     = parseFloat(d.metric2)      || 0;
+  const budget = parseFloat(d.budgetUsed)   || 0;
+  const weeks  = parseFloat(d.weeks)        || 0;
+  const freq   = parseFloat(d.frequency)    || 0;
+  const penA   = parseFloat(d.penReached)   || 0;
   const penP   = parseFloat(d.penPotential) || 0;
-  const thr    = parseFloat(d.threshold)   || (isEng ? 20 : 30);
-  const infl   = parseFloat(d.inflation)   || (isEng ? 300 : 50);
-  const maxR   = parseFloat(d.maxreach)    || (isEng ? 75 : 85);
+  const thr    = parseFloat(d.threshold)    || (isEng ? 20 : 30);
+  const infl   = parseFloat(d.inflation)    || (isEng ? 80 : 50);
+  const maxR   = parseFloat(d.maxreach)     || 85;
 
   const baseCPM   = isEng ? (m1 * m2 * 10) : m1;
   const cappedPot = Math.min(penP, maxR);
 
-  // Hints
   const dcEl = document.getElementById('derived-cpm');
   if (isEng && baseCPM > 0 && m2 > 0) { dcEl.classList.remove('hidden'); dcEl.textContent = '💰 Effective CPM: ' + fEur(baseCPM, 2); }
   else dcEl.classList.add('hidden');
@@ -456,55 +521,66 @@ function calculate() {
 
   if (!aud || !m1 || !budget || !weeks || !freq || !penA || !penP) { showPlaceholder(); return; }
 
-  // Actual
-  const actualUsers = aud * penA / 100;
-  const actualImpr  = actualUsers * freq * weeks;
-  const actualEng   = isEng ? actualImpr * m2 / 100 : actualImpr;
+  const actualImpressions = aud * (penA / 100) * freq * weeks;
+  const actualAvgCPM      = actualImpressions > 0 ? (budget / (actualImpressions / 1000)) : baseCPM;
+  const actualAvgMetric   = cpmToDisplay(actualAvgCPM, m2, isEng);
+  const theorAtPenA       = getEffectiveCPM(penA, baseCPM, infl, thr, isEng);
+  const theorMetricAtPenA = cpmToDisplay(theorAtPenA, m2, isEng);
+  const modelVsRealityPct = theorAtPenA > 0 ? ((actualAvgCPM / theorAtPenA) - 1) * 100 : 0;
+  const cf                = Math.min(10, maxR / Math.max(maxR - penA, 0.5));
+  const metricN           = isEng ? (activeTab === 'video' ? 'CPCV' : 'CPC') : 'CPM';
+  const decN              = isEng ? 4 : 2;
 
-  // Potential
-  const potUsers = aud * cappedPot / 100;
-  const potImpr  = potUsers * freq * weeks;
-  const potEng   = isEng ? potImpr * m2 / 100 : potImpr;
+  const derivedEl = document.getElementById('derived-avg-metric');
+  derivedEl.classList.remove('hidden');
+  derivedEl.textContent = `📊 Derived avg ${metricN}: ${fEur(actualAvgMetric, decN)} (from real spend & impressions)`;
 
-  // ── Budget calculations — TWO separate figures with clear semantics ────────
-  //
-  // 1. budgetNeeded  = full cost of a FUTURE campaign from 0% → cappedPot
-  //    → shown on the Potential card as "Recommended Budget for next flight"
-  //
-  // 2. budgetGap     = INCREMENTAL cost to continue THIS campaign from
-  //                    penA → cappedPot (i.e. what was missing in this flight)
-  //    → shown on the Scaling Opportunity card
-  //
+  const actualUsers    = aud * penA / 100;
+  const actualImpr     = actualUsers * freq * weeks;
+  const actualEng      = isEng ? actualImpr * m2 / 100 : actualImpr;
+  const potUsers       = aud * cappedPot / 100;
+  const potImpr        = potUsers * freq * weeks;
+  const potEng         = isEng ? potImpr * m2 / 100 : potImpr;
   const targetExceeded = penA >= cappedPot;
-  const budgetNeeded   = calcBudgetNeeded(0,    cappedPot, freq, aud, weeks, baseCPM, infl, thr, isEng);
-  const budgetGap      = targetExceeded ? 0
-                       : calcBudgetNeeded(penA, cappedPot, freq, aud, weeks, baseCPM, infl, thr, isEng);
-  // Total spend if THIS campaign had been scaled to the target
-  const totalIfScaled  = budget + budgetGap;
 
-  const penGap   = targetExceeded ? 0 : Math.max(0, cappedPot - penA);
-  const addUsers = targetExceeded ? 0 : Math.max(0, potUsers - actualUsers);
-  const addEng   = targetExceeded ? 0 : Math.max(0, potEng - actualEng);
-  const addImpr  = targetExceeded ? 0 : Math.max(0, potImpr - actualImpr);
+  const budgetNeeded  = calcBudgetNeeded(0, cappedPot, freq, aud, weeks, baseCPM, infl, thr, isEng);
+  const budgetGap     = targetExceeded ? 0
+    : calcBudgetGapCompressed(penA, cappedPot, freq, aud, weeks, actualAvgCPM, baseCPM, infl, thr, maxR, isEng);
+  const totalIfScaled = budget + budgetGap;
+  const penGap        = targetExceeded ? 0 : Math.max(0, cappedPot - penA);
+  const addUsers      = targetExceeded ? 0 : Math.max(0, potUsers - actualUsers);
+  const addEng        = targetExceeded ? 0 : Math.max(0, potEng - actualEng);
+  const addImpr       = targetExceeded ? 0 : Math.max(0, potImpr - actualImpr);
 
-  // Effective metric at target
-  const eCPMAtTarget = getEffectiveCPM(cappedPot, baseCPM, infl, thr, isEng);
-  const natFAtTarget = getNaturalFrequency(cappedPot, weeks, thr);
-  const premAtTarget = freq > natFAtTarget ? 1 + (freq / natFAtTarget - 1) * 0.5 : 1;
-  const avgEffCPM    = eCPMAtTarget * premAtTarget;
-  const effMetric    = isEng && m2 > 0 ? avgEffCPM / (m2 * 10) : avgEffCPM;
-  const inflPct      = baseCPM > 0 ? (avgEffCPM / baseCPM - 1) * 100 : 0;
+  // ── FIX 2: realEffMetric is now the DIRECT curve value at penP ────────────
+  //
+  // Previously this was a reality-anchored projection (actual × model ratio),
+  // which diverged from the green dot whenever the campaign ran unusually
+  // efficiently or at low penetration relative to the model.
+  //
+  // Now it is computed identically to how the green dot is drawn:
+  //   getEffectiveCPM(penP, ...) → cpmToDisplay(...)
+  // This guarantees the stat box and the chart always show the same number.
+  //
+  const baseDisplay   = cpmToDisplay(baseCPM, m2, isEng);
+  const realEffMetric = cpmToDisplay(getEffectiveCPM(cappedPot, baseCPM, infl, thr, isEng), m2, isEng);
 
-  // Safe zone
+  // Inflation % is relative to base rate (market floor entered by user)
+  const realInflPct   = baseDisplay > 0 ? ((realEffMetric / baseDisplay) - 1) * 100 : 0;
+
   let safeZone = 'safe', safeLabel = '✅ Safe Zone';
   if (cappedPot >= cfg.inflPt + 10) { safeZone = 'danger'; safeLabel = '⚠️ High Inflation'; }
   else if (cappedPot >= thr)        { safeZone = 'warn';   safeLabel = '⚡ Inflation Zone'; }
 
-  lastResult = { aud, m1, m2, budget, weeks, freq, penA, penP: cappedPot, baseCPM, thr, infl, maxR,
-    isEng, cfg, actualUsers, actualImpr, actualEng, potUsers, potImpr, potEng,
+  lastResult = {
+    aud, m1, m2, budget, weeks, freq, penA, penP: cappedPot, baseCPM, thr, infl, maxR,
+    isEng, cfg, metricN, decN, cf,
+    actualUsers, actualImpr, actualEng, potUsers, potImpr, potEng,
+    actualAvgCPM, actualAvgMetric, theorAtPenA, theorMetricAtPenA, modelVsRealityPct,
     budgetNeeded, budgetGap, totalIfScaled, targetExceeded,
-    effMetric, inflPct, safeZone, safeLabel,
-    addUsers, penGap, addEng, addImpr };
+    realEffMetric, realInflPct, baseDisplay, safeZone, safeLabel,
+    addUsers, penGap, addEng, addImpr
+  };
 
   updateCards(lastResult);
   updateChart(lastResult);
@@ -516,6 +592,7 @@ function calculate() {
 function showPlaceholder() {
   document.getElementById('placeholder').classList.remove('hidden');
   ['card-actual','card-potential','card-gap','chart-section','rec-section'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById('derived-avg-metric').classList.add('hidden');
 }
 function hidePlaceholder() {
   document.getElementById('placeholder').classList.add('hidden');
@@ -524,260 +601,362 @@ function hidePlaceholder() {
 
 function updateCards(r) {
   const engL = r.cfg.engName;
+  document.getElementById('ra-pen').textContent        = fPct(r.penA);
+  document.getElementById('ra-sub').textContent        = `of ${fNum(r.aud)} audience reached`;
+  document.getElementById('ra-budget').textContent     = fEur(r.budget);
+  document.getElementById('ra-users').textContent      = fNum(r.actualUsers);
+  document.getElementById('ra-imp-lbl').textContent    = 'Impressions';
+  document.getElementById('ra-impr').textContent       = fNum(r.actualImpr);
+  document.getElementById('ra-avgcost-lbl').textContent= `Avg. ${r.metricN} (Real)`;
+  document.getElementById('ra-avgcost').textContent    = fEur(r.actualAvgMetric, r.decN);
 
-  // Actual
-  document.getElementById('ra-pen').textContent     = fPct(r.penA);
-  document.getElementById('ra-sub').textContent     = `of ${fNum(r.aud)} audience reached`;
-  document.getElementById('ra-budget').textContent  = fEur(r.budget);
-  document.getElementById('ra-users').textContent   = fNum(r.actualUsers);
-  document.getElementById('ra-imp-lbl').textContent = 'Impressions';
-  document.getElementById('ra-impr').textContent    = fNum(r.actualImpr);
-  document.getElementById('ra-eng-lbl').textContent = engL;
-  document.getElementById('ra-eng').textContent     = r.isEng ? fNum(r.actualEng) : fNum(r.actualImpr);
-
-  // Potential — budget here is the FULL future campaign cost 0→target
-  const szBadge = document.getElementById('safe-zone-badge');
-  szBadge.textContent = r.safeLabel; szBadge.className = 'rc-badge ' + r.safeZone;
-  document.getElementById('rp-pen').textContent    = fPct(r.penP);
-  document.getElementById('rp-sub').textContent    = `safely achievable from ${fNum(r.aud)} audience`;
-  document.getElementById('rp-budget').textContent = fEur(r.budgetNeeded);
-  document.getElementById('rp-users').textContent  = fNum(r.potUsers);
-  document.getElementById('rp-imp-lbl').textContent = 'Impressions';
-  document.getElementById('rp-impr').textContent   = fNum(r.potImpr);
-  document.getElementById('rp-eng-lbl').textContent = engL;
-  document.getElementById('rp-eng').textContent    = r.isEng ? fNum(r.potEng) : fNum(r.potImpr);
-
-  // Gap card
-  const cardGap   = document.getElementById('card-gap');
-  const rgTitle   = document.getElementById('rg-title');
-  const rgBadge   = document.getElementById('rg-badge');
-  const rgBudget  = document.getElementById('rg-budget');
-  const rgSub     = document.getElementById('rg-sub');
-  const rgMetrics = document.getElementById('rg-metrics');
-
-  if (r.targetExceeded) {
-    cardGap.className    = 'result-card exceeded';
-    rgTitle.className    = 'rc-title exceeded';
-    rgBadge.className    = 'rc-badge exceeded';
-    rgTitle.textContent  = '✅ Target Already Exceeded';
-    rgBadge.textContent  = 'Goal Met';
-    rgBudget.className   = 'rc-main exceeded';
-    rgBudget.textContent = fPct(r.penA);
-    rgSub.textContent    = `actual penetration already meets or exceeds the ${fPct(r.penP)} potential target`;
-    rgMetrics.innerHTML  = `
-      <div class="metric-item"><div class="ml">Actual vs Target</div><div class="mv" style="color:var(--green-light)">${fPct(r.penA)} / ${fPct(r.penP)}</div></div>
-      <div class="metric-item"><div class="ml">Budget Efficiency</div><div class="mv" style="color:var(--green-light)">${fEur(r.budget)}</div></div>
-      <div class="metric-item"><div class="ml">Users Reached</div><div class="mv">${fNum(r.actualUsers)}</div></div>
-      <div class="metric-item"><div class="ml">Status</div><div class="mv" style="color:var(--green-light)">On Target ✓</div></div>`;
+  const rcTag = document.getElementById('reality-check-tag');
+  const rcTxt = document.getElementById('reality-check-txt');
+  rcTag.classList.remove('hidden');
+  const diff = Math.abs(r.modelVsRealityPct);
+  if (diff < 10) {
+    rcTxt.textContent = `Model & reality aligned (${r.modelVsRealityPct>0?'+':''}${Math.round(r.modelVsRealityPct)}%)`;
+  } else if (r.modelVsRealityPct < -10) {
+    rcTxt.textContent = `${Math.round(diff)}% more efficient than modelled — gap calc anchored to real data`;
   } else {
-    cardGap.className    = 'result-card gap';
-    rgTitle.className    = 'rc-title gap';
-    rgBadge.className    = 'rc-badge gap';
-    rgTitle.textContent  = '💡 Scaling Opportunity';
-    rgBadge.textContent  = 'Missed';
-    rgBudget.className   = 'rc-main gap';
-    // ── Show incremental gap (penA → cappedPot), NOT fresh-start gap ──
-    rgBudget.textContent = r.budgetGap > 0 ? '+' + fEur(r.budgetGap) : '—';
-    rgSub.textContent    = `additional budget within this campaign would have unlocked`;
-    rgMetrics.innerHTML  = `
-      <div class="metric-item"><div class="ml">Add. Users</div><div class="mv">+${fNum(r.addUsers)}</div></div>
-      <div class="metric-item"><div class="ml">Penetration Uplift</div><div class="mv">+${fPct(r.penGap)}</div></div>
-      <div class="metric-item"><div class="ml">Add. ${engL}</div><div class="mv">+${fNum(r.isEng ? r.addEng : r.addImpr)}</div></div>
-      <div class="metric-item"><div class="ml">Total If Scaled</div><div class="mv">${fEur(r.totalIfScaled)}</div></div>`;
+    rcTxt.textContent = `${Math.round(diff)}% costlier than modelled — gap calc anchored to real data`;
   }
 
-  // Stats
-  document.getElementById('stat-pen').textContent     = r.targetExceeded ? '✓ Met' : '+' + fPct(r.penGap);
-  document.getElementById('stat-eng-lbl').textContent = 'Add. ' + r.cfg.engName;
-  document.getElementById('stat-eng').textContent     = r.targetExceeded ? '—' : (r.isEng ? '+' + fNum(r.addEng) : '+' + fNum(r.addImpr));
-  document.getElementById('stat-gap').textContent     = r.targetExceeded ? '€0' : (r.budgetGap > 0 ? '+' + fEur(r.budgetGap) : '—');
-  document.getElementById('stat-eff-lbl').textContent = r.cfg.effLabel;
-  document.getElementById('stat-eff').textContent     = fEur(r.effMetric, r.isEng ? 4 : 2) + (r.inflPct > 0 ? ' (+'+Math.round(r.inflPct)+'%)' : '');
-  document.getElementById('chart-section-title').textContent = '📊 Campaign Scale Analysis — ' +
-    (activeTab === 'awareness' ? 'Awareness (CPM)' : activeTab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)');
+  const szBadge = document.getElementById('safe-zone-badge');
+  szBadge.textContent = r.safeLabel; szBadge.className = 'rc-badge ' + r.safeZone;
+  document.getElementById('rp-pen').textContent     = fPct(r.penP);
+  document.getElementById('rp-sub').textContent     = `safely achievable from ${fNum(r.aud)} audience`;
+  document.getElementById('rp-budget').textContent  = fEur(r.budgetNeeded);
+  document.getElementById('rp-users').textContent   = fNum(r.potUsers);
+  document.getElementById('rp-imp-lbl').textContent = 'Impressions';
+  document.getElementById('rp-impr').textContent    = fNum(r.potImpr);
+  document.getElementById('rp-eng-lbl').textContent = engL;
+  document.getElementById('rp-eng').textContent     = r.isEng ? fNum(r.potEng) : fNum(r.potImpr);
+
+  const cardGap=document.getElementById('card-gap'), rgTitle=document.getElementById('rg-title'),
+    rgBadge=document.getElementById('rg-badge'), rgBudget=document.getElementById('rg-budget'),
+    rgSub=document.getElementById('rg-sub'), rgMetrics=document.getElementById('rg-metrics'),
+    cmpTag=document.getElementById('compression-tag'), cmpTxt=document.getElementById('compression-tag-txt');
+
+  if (r.targetExceeded) {
+    cardGap.className='result-card exceeded'; rgTitle.className='rc-title exceeded';
+    rgBadge.className='rc-badge exceeded'; rgTitle.textContent='✅ Target Already Exceeded';
+    rgBadge.textContent='Goal Met'; rgBudget.className='rc-main exceeded';
+    rgBudget.textContent=fPct(r.penA);
+    rgSub.textContent=`actual penetration already meets or exceeds the ${fPct(r.penP)} potential target`;
+    rgMetrics.innerHTML=`
+      <div class="metric-item"><div class="ml">Actual vs Target</div><div class="mv" style="color:var(--green-light)">${fPct(r.penA)} / ${fPct(r.penP)}</div></div>
+      <div class="metric-item"><div class="ml">Budget Spent</div><div class="mv" style="color:var(--green-light)">${fEur(r.budget)}</div></div>
+      <div class="metric-item"><div class="ml">Users Reached</div><div class="mv">${fNum(r.actualUsers)}</div></div>
+      <div class="metric-item"><div class="ml">Status</div><div class="mv" style="color:var(--green-light)">On Target ✓</div></div>`;
+    cmpTag.classList.add('hidden');
+  } else {
+    cardGap.className='result-card gap'; rgTitle.className='rc-title gap';
+    rgBadge.className='rc-badge gap'; rgTitle.textContent='💡 Scaling Opportunity';
+    rgBadge.textContent='Missed'; rgBudget.className='rc-main gap';
+    rgBudget.textContent=r.budgetGap>0?'+'+fEur(r.budgetGap):'—';
+    rgSub.textContent='additional budget within this campaign would have unlocked';
+    rgMetrics.innerHTML=`
+      <div class="metric-item"><div class="ml">Add. Users</div><div class="mv">+${fNum(r.addUsers)}</div></div>
+      <div class="metric-item"><div class="ml">Penetration Uplift</div><div class="mv">+${fPct(r.penGap)}</div></div>
+      <div class="metric-item"><div class="ml">Add. ${engL}</div><div class="mv">+${fNum(r.isEng?r.addEng:r.addImpr)}</div></div>
+      <div class="metric-item"><div class="ml">Total If Scaled</div><div class="mv">${fEur(r.totalIfScaled)}</div></div>`;
+    cmpTag.classList.remove('hidden');
+    cmpTxt.textContent=`Reality-anchored · ${r.cf.toFixed(2)}× compressed (${fPct(r.maxR-r.penA)} headroom of ${fPct(r.maxR)} max)`;
+  }
+
+  document.getElementById('stat-pen').textContent      = r.targetExceeded?'✓ Met':'+'+fPct(r.penGap);
+  document.getElementById('stat-eng-lbl').textContent  = 'Add. '+r.cfg.engName;
+  document.getElementById('stat-eng').textContent      = r.targetExceeded?'—':(r.isEng?'+'+fNum(r.addEng):'+'+fNum(r.addImpr));
+  document.getElementById('stat-gap').textContent      = r.targetExceeded?'€0':(r.budgetGap>0?'+'+fEur(r.budgetGap):'—');
+  document.getElementById('stat-gap-note').textContent = r.targetExceeded?'':'reality-anchored';
+  document.getElementById('stat-eff-lbl').textContent  = r.cfg.effLabel;
+  // FIX 2: value now matches green dot exactly; inflation % vs base rate
+  document.getElementById('stat-eff').textContent      = fEur(r.realEffMetric,r.decN)+(r.realInflPct>0?' (+'+Math.round(r.realInflPct)+'%)':'');
+  document.getElementById('stat-eff-note').textContent = `base ${r.metricN}: ${fEur(r.baseDisplay,r.decN)}`;
+  document.getElementById('chart-section-title').textContent='📊 Campaign Scale Analysis — '+(activeTab==='awareness'?'Awareness (CPM)':activeTab==='video'?'Video Completion (CPCV95)':'Consideration (CPC)');
 }
 
 // ─── CHART ────────────────────────────────────────────────────────────────────
-function updateChart(r) { updateBars(r); renderCPMCurve(r); }
+function updateChart(r){ updateBars(r); renderCPMCurve(r); }
 
 function updateBars(r) {
-  const aFrac = Math.max(0.04, r.penA / 100), aEmpty = 1 - aFrac;
-  document.getElementById('bar-actual-empty').style.flex        = aEmpty * 100;
-  document.getElementById('bar-actual-filled').style.flex       = aFrac * 100;
-  document.getElementById('bar-actual-filled').style.minHeight  = aFrac > 0.1 ? '50px' : '20px';
-  document.getElementById('bar-actual-pct').textContent         = fPct(r.penA);
-  document.getElementById('bar-actual-budget').textContent      = fEur(r.budget);
-  document.getElementById('bar-actual-empty').querySelector('span').textContent = aEmpty*100 >= 15 ? (aEmpty*100).toFixed(0)+'% unreached' : '';
-
-  const pFrac = Math.max(0.04, r.penP / 100), pEmpty = 1 - pFrac;
-  document.getElementById('bar-pot-empty').style.flex        = pEmpty * 100;
-  document.getElementById('bar-pot-filled').style.flex       = pFrac * 100;
-  document.getElementById('bar-pot-filled').style.minHeight  = pFrac > 0.1 ? '50px' : '20px';
-  document.getElementById('bar-pot-pct').textContent         = fPct(r.penP);
-  document.getElementById('bar-pot-budget').textContent      = fEur(r.budgetNeeded);
-  document.getElementById('bar-pot-empty').querySelector('span').textContent = pEmpty*100 >= 15 ? (pEmpty*100).toFixed(0)+'% unreached' : '';
-
-  const uplift = document.getElementById('bar-uplift');
-  const arrow  = document.getElementById('bar-arrow-icon');
-  if (r.targetExceeded) {
-    arrow.textContent = '✓'; arrow.style.color = 'var(--green-light)';
-    uplift.textContent = 'Goal Met';
-  } else {
-    arrow.textContent = '→'; arrow.style.color = 'var(--green-light)';
-    uplift.textContent = '+' + fPct(r.penGap);
-  }
+  const aFrac=Math.max(0.04,r.penA/100), aEmpty=1-aFrac;
+  document.getElementById('bar-actual-empty').style.flex=aEmpty*100;
+  document.getElementById('bar-actual-filled').style.flex=aFrac*100;
+  document.getElementById('bar-actual-filled').style.minHeight=aFrac>0.1?'50px':'20px';
+  document.getElementById('bar-actual-pct').textContent=fPct(r.penA);
+  document.getElementById('bar-actual-budget').textContent=fEur(r.budget);
+  document.getElementById('bar-actual-empty').querySelector('span').textContent=aEmpty*100>=15?(aEmpty*100).toFixed(0)+'% unreached':'';
+  const pFrac=Math.max(0.04,r.penP/100), pEmpty=1-pFrac;
+  document.getElementById('bar-pot-empty').style.flex=pEmpty*100;
+  document.getElementById('bar-pot-filled').style.flex=pFrac*100;
+  document.getElementById('bar-pot-filled').style.minHeight=pFrac>0.1?'50px':'20px';
+  document.getElementById('bar-pot-pct').textContent=fPct(r.penP);
+  document.getElementById('bar-pot-budget').textContent=fEur(r.budgetNeeded);
+  document.getElementById('bar-pot-empty').querySelector('span').textContent=pEmpty*100>=15?(pEmpty*100).toFixed(0)+'% unreached':'';
+  const uplift=document.getElementById('bar-uplift'), arrow=document.getElementById('bar-arrow-icon');
+  if(r.targetExceeded){arrow.textContent='✓';arrow.style.color='var(--green-light)';uplift.textContent='Goal Met';}
+  else{arrow.textContent='→';arrow.style.color='var(--green-light)';uplift.textContent='+'+fPct(r.penGap);}
 }
 
+// ─── SVG CHART ────────────────────────────────────────────────────────────────
+let _chartR = null;
+
 function renderCPMCurve(r) {
+  _chartR = r;
   const svg = document.getElementById('cpm-chart');
-  const W=460,H=240,PL=52,PR=16,PT=16,PB=38,cW=W-PL-PR,cH=H-PT-PB;
-  const maxPen = Math.min(r.maxR + 5, 100);
-  const pts = [];
-  for (let p = 0; p <= maxPen; p += 0.5) pts.push({ p, cpm: getEffectiveCPM(p, r.baseCPM, r.infl, r.thr, r.isEng) });
-  const maxCPM = Math.max(...pts.map(pt => pt.cpm)) * 1.08;
-  const tx = p   => PL + (p / maxPen) * cW;
-  const ty = cpm => PT + cH - (cpm / maxCPM) * cH;
+  const { W, H, PL, PR, PT, PB } = C;
+  const cW = W-PL-PR, cH = H-PT-PB;
+  const maxPen = r.maxR;
+
+  const curvePts = [];
+  for (let p = 0; p <= maxPen; p += 0.5) {
+    const rawCPM = getEffectiveCPM(p, r.baseCPM, r.infl, r.thr, r.isEng);
+    curvePts.push({ p, v: cpmToDisplay(rawCPM, r.m2, r.isEng) });
+  }
+
+  const maxY = Math.max(...curvePts.map(pt => pt.v)) * 1.15;
+  const tx = p => PL + (p / maxPen) * cW;
+  const ty = v => PT + cH - (Math.min(Math.max(v,0), maxY) / maxY) * cH;
 
   let html = '';
   const xThr  = tx(Math.min(r.thr, maxPen));
   const xInfl = tx(Math.min(r.isEng ? 40 : 50, maxPen));
-  const xMax  = tx(maxPen);
+  const xEnd  = tx(maxPen);
+
   html += `<rect x="${tx(0)}" y="${PT}" width="${xThr-tx(0)}" height="${cH}" fill="rgba(67,160,71,0.12)"/>`;
   html += `<rect x="${xThr}" y="${PT}" width="${xInfl-xThr}" height="${cH}" fill="rgba(255,193,7,0.1)"/>`;
-  html += `<rect x="${xInfl}" y="${PT}" width="${xMax-xInfl}" height="${cH}" fill="rgba(230,0,35,0.1)"/>`;
+  html += `<rect x="${xInfl}" y="${PT}" width="${xEnd-xInfl}" height="${cH}" fill="rgba(230,0,35,0.1)"/>`;
 
   const dk = document.body.classList.contains('dark');
-  const gc = dk ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)';
-  const ac = dk ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.25)';
-  const tc = dk ? '#888' : '#999';
+  const gc = dk?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.07)';
+  const ac = dk?'rgba(255,255,255,0.18)':'rgba(0,0,0,0.25)';
+  const tc = dk?'#888':'#999';
 
-  for (let i=0;i<=4;i++) {
-    const yy = PT+(cH/4)*i, val = maxCPM*(1-i/4);
+  for (let i = 0; i <= 4; i++) {
+    const yy  = PT + (cH/4)*i;
+    const val = maxY * (1 - i/4);
+    const dp  = val < 0.1 ? 4 : val < 1 ? 3 : val < 10 ? 2 : 1;
     html += `<line x1="${PL}" y1="${yy}" x2="${W-PR}" y2="${yy}" stroke="${gc}" stroke-width="1"/>`;
-    html += `<text x="${PL-6}" y="${yy+4}" text-anchor="end" font-size="9" fill="${tc}">€${val.toFixed(val<1?3:val<10?2:1)}</text>`;
+    html += `<text x="${PL-6}" y="${yy+4}" text-anchor="end" font-size="9" fill="${tc}">€${val.toFixed(dp)}</text>`;
   }
-  for (let p=0;p<=maxPen;p+=20) {
-    const xx=tx(p);
+  const step = maxPen <= 50 ? 10 : 20;
+  for (let p = 0; p <= maxPen; p += step) {
+    const xx = tx(p);
     html += `<line x1="${xx}" y1="${PT}" x2="${xx}" y2="${PT+cH}" stroke="${gc}" stroke-width="1"/>`;
     html += `<text x="${xx}" y="${PT+cH+14}" text-anchor="middle" font-size="9" fill="${tc}">${p}%</text>`;
   }
+  if (maxPen % step !== 0) html += `<text x="${xEnd}" y="${PT+cH+14}" text-anchor="middle" font-size="9" fill="${tc}">${maxPen}%</text>`;
   html += `<line x1="${PL}" y1="${PT}" x2="${PL}" y2="${PT+cH}" stroke="${ac}" stroke-width="1.5"/>`;
   html += `<line x1="${PL}" y1="${PT+cH}" x2="${W-PR}" y2="${PT+cH}" stroke="${ac}" stroke-width="1.5"/>`;
-  html += `<line x1="${xThr}" y1="${PT}" x2="${xThr}" y2="${PT+cH}" stroke="rgba(255,193,7,0.6)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
-  html += `<text x="${xThr+3}" y="${PT+10}" font-size="8" fill="rgba(255,193,7,0.9)">Threshold</text>`;
-  html += `<line x1="${xInfl}" y1="${PT}" x2="${xInfl}" y2="${PT+cH}" stroke="rgba(230,0,35,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
-  html += `<text x="${xInfl+3}" y="${PT+20}" font-size="8" fill="rgba(230,0,35,0.8)">Infl. Point</text>`;
-  const xMaxR = tx(r.maxR);
-  html += `<line x1="${xMaxR}" y1="${PT}" x2="${xMaxR}" y2="${PT+cH}" stroke="rgba(100,181,246,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
-  html += `<text x="${xMaxR-3}" y="${PT+10}" text-anchor="end" font-size="8" fill="rgba(100,181,246,0.9)">Max</text>`;
 
-  const pp = pts.map((pt,i) => `${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.cpm).toFixed(1)}`).join(' ');
-  const ap = pp + ` L${tx(maxPen).toFixed(1)},${(PT+cH).toFixed(1)} L${tx(0).toFixed(1)},${(PT+cH).toFixed(1)} Z`;
-  html += `<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E60023" stop-opacity="0.3"/><stop offset="100%" stop-color="#E60023" stop-opacity="0.02"/></linearGradient></defs>`;
-  html += `<path d="${ap}" fill="url(#cg)"/>`;
-  html += `<path d="${pp}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if (r.thr < maxPen) {
+    html += `<line x1="${xThr}" y1="${PT}" x2="${xThr}" y2="${PT+cH}" stroke="rgba(255,193,7,0.6)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    html += `<text x="${xThr+3}" y="${PT+10}" font-size="8" fill="rgba(255,193,7,0.9)">Threshold</text>`;
+  }
+  const inflPt = r.isEng ? 40 : 50;
+  if (inflPt < maxPen) {
+    const xI = tx(inflPt);
+    html += `<line x1="${xI}" y1="${PT}" x2="${xI}" y2="${PT+cH}" stroke="rgba(230,0,35,0.5)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+    html += `<text x="${xI+3}" y="${PT+20}" font-size="8" fill="rgba(230,0,35,0.8)">Infl. Point</text>`;
+  }
+  html += `<line x1="${xEnd}" y1="${PT}" x2="${xEnd}" y2="${PT+cH}" stroke="rgba(100,181,246,0.7)" stroke-width="2"/>`;
+  html += `<text x="${xEnd-3}" y="${PT+10}" text-anchor="end" font-size="8" fill="rgba(100,181,246,0.9)">Max ${r.maxR}%</text>`;
 
-  if (r.penA <= maxPen) {
-    const ax=tx(r.penA), ay=ty(getEffectiveCPM(r.penA,r.baseCPM,r.infl,r.thr,r.isEng));
-    html += `<circle cx="${ax}" cy="${ay}" r="6" fill="#ff9800" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
-    html += `<line x1="${ax}" y1="${ay+7}" x2="${ax}" y2="${PT+cH}" stroke="#ff9800" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>`;
+  html += `<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E60023" stop-opacity="0.28"/><stop offset="100%" stop-color="#E60023" stop-opacity="0.02"/></linearGradient></defs>`;
+  const fillD = curvePts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ')
+    + ` L${xEnd.toFixed(1)},${(PT+cH).toFixed(1)} L${tx(0).toFixed(1)},${(PT+cH).toFixed(1)} Z`;
+  html += `<path d="${fillD}" fill="url(#cg)"/>`;
+
+  const hasPenA = r.penA > 0;
+  if (hasPenA) {
+    const solidPts = curvePts.filter(pt => pt.p <= r.penA + 0.1);
+    if (solidPts.length > 1) {
+      const ds = solidPts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ');
+      let len = 0;
+      for (let i=1;i<solidPts.length;i++){const dx=tx(solidPts[i].p)-tx(solidPts[i-1].p),dy=ty(solidPts[i].v)-ty(solidPts[i-1].v);len+=Math.sqrt(dx*dx+dy*dy);}
+      len = Math.ceil(len)+10;
+      html += `<path class="curve-path-solid" d="${ds}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="--path-len:${len};animation-duration:${Math.max(0.5,len/400)}s"/>`;
+    }
+    const dashPts = curvePts.filter(pt => pt.p >= r.penA - 0.1);
+    if (dashPts.length > 1) {
+      const dd = dashPts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ');
+      html += `<path class="curve-path-dash" d="${dd}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+  } else {
+    const dFull = curvePts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ');
+    let len = 0;
+    for (let i=1;i<curvePts.length;i++){const dx=tx(curvePts[i].p)-tx(curvePts[i-1].p),dy=ty(curvePts[i].v)-ty(curvePts[i-1].v);len+=Math.sqrt(dx*dx+dy*dy);}
+    len=Math.ceil(len)+10;
+    html += `<path class="curve-path-solid" d="${dFull}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="--path-len:${len};animation-duration:${Math.max(0.6,len/400)}s"/>`;
   }
-  if (r.penP <= maxPen) {
-    const px2=tx(r.penP), py2=ty(getEffectiveCPM(r.penP,r.baseCPM,r.infl,r.thr,r.isEng));
-    html += `<circle cx="${px2}" cy="${py2}" r="6" fill="#43a047" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2"/>`;
-    html += `<line x1="${px2}" y1="${py2+7}" x2="${px2}" y2="${PT+cH}" stroke="#43a047" stroke-width="1" stroke-dasharray="3,2" opacity="0.6"/>`;
+
+  // Hover target
+  const hoverD = curvePts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ');
+  html += `<path id="hover-target" d="${hoverD}" fill="none" stroke="transparent" stroke-width="18" style="cursor:crosshair"/>`;
+  html += `<g id="crosshair" style="opacity:0;pointer-events:none">
+    <line id="ch-vline" x1="0" y1="${PT}" x2="0" y2="${PT+cH}" stroke="rgba(255,255,255,0.25)" stroke-width="1" stroke-dasharray="3,2"/>
+    <circle id="ch-dot" cx="0" cy="0" r="4.5" fill="#E60023" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2"/>
+  </g>`;
+
+  // Orange dot: actual
+  if (r.penA > 0 && r.penA <= maxPen) {
+    const ax = tx(r.penA);
+    const curveV = cpmToDisplay(getEffectiveCPM(r.penA, r.baseCPM, r.infl, r.thr, r.isEng), r.m2, r.isEng);
+    const curveY = ty(curveV);
+    html += `<line x1="${ax}" y1="${curveY+8}" x2="${ax}" y2="${PT+cH}" stroke="#ff9800" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>`;
+    html += `<circle class="curve-dot curve-dot-orange" cx="${ax}" cy="${curveY}" r="7" fill="#ff9800" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2.5"/>`;
   }
+
+  // Green dot: potential — same formula as stat box (FIX 2 source of truth)
+  if (r.penP > 0 && r.penP <= maxPen && Math.abs(r.penP - r.penA) > 0.5) {
+    const gx = tx(r.penP);
+    const greenV = cpmToDisplay(getEffectiveCPM(r.penP, r.baseCPM, r.infl, r.thr, r.isEng), r.m2, r.isEng);
+    const greenY = ty(greenV);
+    html += `<line x1="${gx}" y1="${greenY+8}" x2="${gx}" y2="${PT+cH}" stroke="#43a047" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>`;
+    html += `<circle class="curve-dot curve-dot-green" cx="${gx}" cy="${greenY}" r="7" fill="#43a047" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2.5"/>`;
+  }
+
+  const yLabel = r.isEng ? (activeTab==='video'?'CPCV':'CPC') : 'CPM';
   html += `<text x="${PL+cW/2}" y="${H-4}" text-anchor="middle" font-size="9" fill="${tc}" font-weight="600">Audience Penetration →</text>`;
-  html += `<text x="10" y="${PT+cH/2}" text-anchor="middle" font-size="9" fill="${tc}" font-weight="600" transform="rotate(-90 10 ${PT+cH/2})">${r.cfg.effLabel.replace('Eff. ','').replace(' at Target','')} →</text>`;
+  html += `<text x="10" y="${PT+cH/2}" text-anchor="middle" font-size="9" fill="${tc}" font-weight="600" transform="rotate(-90 10 ${PT+cH/2})">${yLabel} →</text>`;
+
   svg.innerHTML = html;
+  svg._tx = tx; svg._ty = ty; svg._maxPen = maxPen; svg._maxY = maxY;
+}
+
+// ─── TOOLTIP / CROSSHAIR ─────────────────────────────────────────────────────
+function chartMouseMove(evt) {
+  if (!_chartR) return;
+  const svg  = document.getElementById('cpm-chart');
+  if (!svg._tx) return;
+  const rect = svg.getBoundingClientRect();
+  const { PL, PR, PT, PB, W, H } = C;
+  const cW   = W - PL - PR, cH = H - PT - PB;
+  const scaleX = W / rect.width;
+  const mouseX = (evt.clientX - rect.left) * scaleX;
+  const pen    = Math.max(0, Math.min(_chartR.maxR, ((mouseX - PL) / cW) * _chartR.maxR));
+
+  const rawCPM = getEffectiveCPM(pen, _chartR.baseCPM, _chartR.infl, _chartR.thr, _chartR.isEng);
+  const dispV  = cpmToDisplay(rawCPM, _chartR.m2, _chartR.isEng);
+  const cx     = svg._tx(pen);
+  const cy     = svg._ty(dispV);
+
+  const crosshair = svg.querySelector('#crosshair');
+  const vline     = svg.querySelector('#ch-vline');
+  const dot       = svg.querySelector('#ch-dot');
+  if (crosshair && vline && dot) {
+    crosshair.style.opacity='1';
+    vline.setAttribute('x1',cx); vline.setAttribute('x2',cx);
+    dot.setAttribute('cx',cx);   dot.setAttribute('cy',cy);
+  }
+
+  const tt   = document.getElementById('svg-tooltip');
+  const metN = _chartR.isEng ? (activeTab==='video'?'CPCV':'CPC') : 'CPM';
+  const decN = _chartR.isEng ? 4 : 2;
+  const zone = pen <= _chartR.thr ? '🟢 Safe' : pen <= (activeTab!=='awareness'?40:50) ? '🟡 Inflation' : '🔴 High';
+  tt.innerHTML = `<strong>${pen.toFixed(1)}% pen</strong> &nbsp;·&nbsp; ${metN}: <strong>${fEur(dispV,decN)}</strong> &nbsp;·&nbsp; ${zone}`;
+  tt.style.left = (evt.clientX+14)+'px';
+  tt.style.top  = (evt.clientY-10)+'px';
+  tt.classList.add('visible');
+}
+
+function chartMouseLeave() {
+  document.getElementById('svg-tooltip').classList.remove('visible');
+  const svg = document.getElementById('cpm-chart');
+  const crosshair = svg.querySelector('#crosshair');
+  if (crosshair) crosshair.style.opacity='0';
 }
 
 // ─── RECOMMENDATION ───────────────────────────────────────────────────────────
 function updateRec(r) {
-  const engN   = r.cfg.engName.toLowerCase();
-  const tab    = activeTab;
-  const effStr = fEur(r.effMetric, r.isEng ? 4 : 2) + (r.inflPct > 0 ? ` (+${Math.round(r.inflPct)}% above base rate)` : '');
-  const tName  = tab === 'awareness' ? 'Awareness (CPM)' : tab === 'video' ? 'Video Completion (CPCV95)' : 'Consideration (CPC)';
+  const engN  = r.cfg.engName.toLowerCase();
+  const tab   = activeTab;
+  const tName = tab==='awareness'?'Awareness (CPM)':tab==='video'?'Video Completion (CPCV95)':'Consideration (CPC)';
+  const effStr= fEur(r.realEffMetric,r.decN)+(r.realInflPct>0?` (+${Math.round(r.realInflPct)}% vs base ${r.metricN})`:'');
 
   let html = `<p>Your <strong>${tName}</strong> campaign successfully reached <strong>${fPct(r.penA)}</strong> of the potential audience (${fNum(r.actualUsers)} users) using a total budget of <strong>${fEur(r.budget)}</strong> over ${r.weeks} weeks at an average frequency of ${r.freq}× per week.</p>`;
 
+  const diff = Math.abs(r.modelVsRealityPct);
+  if (diff >= 10) {
+    const dir = r.modelVsRealityPct < 0 ? 'more efficiently' : 'at higher cost';
+    html += `<div class="rec-highlight blue">📍 <strong>Reality anchor applied:</strong> The campaign ran <strong>${Math.round(diff)}% ${dir} than modelled</strong> at ${fPct(r.penA)} penetration (actual avg ${r.metricN}: ${fEur(r.actualAvgMetric,r.decN)} vs model: ${fEur(r.theorMetricAtPenA,r.decN)}). The effective ${r.metricN} at target is read directly from the curve at ${fPct(r.penP)}.</div>`;
+  }
+
   if (r.targetExceeded) {
-    html += `<div class="rec-highlight green">✅ This campaign already met or exceeded the defined penetration potential of <strong>${fPct(r.penP)}</strong>. With <strong>${fPct(r.penA)}</strong> penetration achieved, no additional budget was needed — the campaign was well-scaled to its target ceiling.</div>`;
-    html += `<p><strong>Recommendation for the next campaign flight:</strong> The current setup proved effective. Consider raising the penetration potential target above <strong>${fPct(r.penA)}</strong> to identify new scaling headroom, or maintain the same parameters to deliver consistent audience reach.</p>`;
+    html += `<div class="rec-highlight green">✅ This campaign already met or exceeded the defined penetration potential of <strong>${fPct(r.penP)}</strong>. With <strong>${fPct(r.penA)}</strong> penetration achieved, no additional budget was needed.</div>`;
+    html += `<p><strong>Recommendation for the next campaign flight:</strong> Consider raising the penetration potential target above <strong>${fPct(r.penA)}</strong> to identify new scaling headroom, or maintain the same parameters to deliver consistent audience reach.</p>`;
   } else {
-    html += `<div class="rec-highlight">Based on the audience size of ${fNum(r.aud)} and the campaign parameters, the safe scaling potential for this campaign was <strong>${fPct(r.penP)}</strong> penetration — ${fNum(r.potUsers)} unique users. At this level, the effective ${r.isEng ? r.cfg.effLabel.replace('Eff. ','').replace(' at Target','') : 'CPM'} would have been ${effStr}.</div>`;
-    html += `<p>Reaching from the actual <strong>${fPct(r.penA)}</strong> to the target <strong>${fPct(r.penP)}</strong> within this same campaign would have required an additional <strong>${fEur(r.budgetGap)}</strong> — bringing the total campaign spend to <strong>${fEur(r.totalIfScaled)}</strong>. This would have delivered an additional <strong>${fNum(r.addUsers)} users</strong> and <strong>+${fNum(r.isEng ? r.addEng : r.addImpr)} ${engN}</strong>.</p>`;
-    html += `<p><strong>Recommendation for the next campaign flight:</strong> Plan a full future campaign with a budget of <strong>${fEur(r.budgetNeeded)}</strong> targeting <strong>${fPct(r.penP)} audience penetration</strong> at ${r.freq}× weekly frequency over ${r.weeks} weeks. This keeps the campaign within a ${r.safeZone === 'safe' ? 'cost-efficient safe zone' : r.safeZone === 'warn' ? 'moderate inflation zone' : 'elevated but manageable cost range'} and maximises ${tab === 'awareness' ? 'brand awareness reach' : tab === 'video' ? 'video completion impact' : 'qualified consideration traffic'}.</p>`;
+    html += `<div class="rec-highlight">The scaling curve shows the ${r.metricN} at <strong>${fPct(r.penP)}</strong> penetration is <strong>${effStr}</strong> — read directly from the curve (green dot). The base ${r.metricN} stays flat at <strong>${fEur(r.baseDisplay,r.decN)}</strong> until the inflation threshold at ${fPct(r.thr)}.</div>`;
+    html += `<p>Scaling from <strong>${fPct(r.penA)}</strong> to <strong>${fPct(r.penP)}</strong> within this campaign would have required an additional <strong>${fEur(r.budgetGap)}</strong> — bringing total spend to <strong>${fEur(r.totalIfScaled)}</strong>. This would have delivered an additional <strong>${fNum(r.addUsers)} users</strong> and <strong>+${fNum(r.isEng?r.addEng:r.addImpr)} ${engN}</strong>.</p>`;
+    html += `<p><strong>Recommendation for the next campaign flight:</strong> Plan a full future campaign with a budget of <strong>${fEur(r.budgetNeeded)}</strong> targeting <strong>${fPct(r.penP)} audience penetration</strong> at ${r.freq}× weekly frequency over ${r.weeks} weeks. This keeps the campaign within a ${r.safeZone==='safe'?'cost-efficient safe zone':r.safeZone==='warn'?'moderate inflation zone':'elevated but manageable cost range'} and maximises ${tab==='awareness'?'brand awareness reach':tab==='video'?'video completion impact':'qualified consideration traffic'}.</p>`;
   }
   document.getElementById('rec-body').innerHTML = html;
 }
 
 // ─── TAB / THEME / ADV ───────────────────────────────────────────────────────
-function switchTab(t) {
-  saveTabData(); activeTab = t;
-  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+function switchTab(t){
+  saveTabData(); activeTab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
   loadTabData(); updateTabUI(); calculate();
 }
-function saveTabData() {
-  ['audienceSize','budgetUsed'].forEach(id => { const el=document.getElementById(id); if(el) tabData[activeTab][id]=el.value.replace(/,/g,''); });
-  ['metric1','metric2','weeks','frequency','penReached','penPotential'].forEach(id => { const el=document.getElementById(id); if(el) tabData[activeTab][id]=el.value; });
-  ['adv-threshold','adv-inflation','adv-maxreach'].forEach((id,i) => { const el=document.getElementById(id); const key=['threshold','inflation','maxreach'][i]; if(el) tabData[activeTab][key]=el.value; });
+function saveTabData(){
+  ['audienceSize','budgetUsed'].forEach(id=>{const el=document.getElementById(id);if(el)tabData[activeTab][id]=el.value.replace(/,/g,'');});
+  ['metric1','metric2','weeks','frequency','penReached','penPotential'].forEach(id=>{const el=document.getElementById(id);if(el)tabData[activeTab][id]=el.value;});
+  [['adv-threshold','threshold'],['adv-inflation','inflation'],['adv-maxreach','maxreach']].forEach(([id,key])=>{const el=document.getElementById(id);if(el)tabData[activeTab][key]=el.value;});
 }
-function loadTabData() {
-  const d = tabData[activeTab];
-  document.getElementById('audienceSize').value  = d.audienceSize ? parseFloat(d.audienceSize).toLocaleString('en-US') : '';
-  document.getElementById('budgetUsed').value    = d.budgetUsed ? parseFloat(d.budgetUsed).toLocaleString('en-US') : '';
-  document.getElementById('metric1').value       = d.metric1 || '';
-  document.getElementById('metric2').value       = d.metric2 || '';
-  document.getElementById('weeks').value         = d.weeks || '';
-  document.getElementById('frequency').value     = d.frequency || '';
-  document.getElementById('penReached').value    = d.penReached || '';
-  document.getElementById('penPotential').value  = d.penPotential || '';
-  document.getElementById('adv-threshold').value = d.threshold || '';
-  document.getElementById('adv-inflation').value = d.inflation || '';
-  document.getElementById('adv-maxreach').value  = d.maxreach || '';
+function loadTabData(){
+  const d=tabData[activeTab];
+  document.getElementById('audienceSize').value  = d.audienceSize?parseFloat(d.audienceSize).toLocaleString('en-US'):'';
+  document.getElementById('budgetUsed').value    = d.budgetUsed?parseFloat(d.budgetUsed).toLocaleString('en-US'):'';
+  document.getElementById('metric1').value       = d.metric1||'';
+  document.getElementById('metric2').value       = d.metric2||'';
+  document.getElementById('weeks').value         = d.weeks||'';
+  document.getElementById('frequency').value     = d.frequency||'';
+  document.getElementById('penReached').value    = d.penReached||'';
+  document.getElementById('penPotential').value  = d.penPotential||'';
+  document.getElementById('adv-threshold').value = d.threshold||'';
+  document.getElementById('adv-inflation').value = d.inflation||'';
+  document.getElementById('adv-maxreach').value  = d.maxreach||'';
 }
-function updateTabUI() {
-  const cfg = tabConfigs[activeTab];
-  document.getElementById('m1-label').textContent = cfg.m1Label;
-  document.getElementById('m1-hint').textContent  = cfg.m1Hint;
-  document.getElementById('metric1').placeholder  = cfg.m1Ph;
-  const m2f = document.getElementById('m2-field');
-  if (cfg.m2) { m2f.classList.remove('hidden'); document.getElementById('m2-label').textContent=cfg.m2Label; document.getElementById('m2-hint').textContent=cfg.m2Hint; document.getElementById('metric2').placeholder=cfg.m2Ph; }
+function updateTabUI(){
+  const cfg=tabConfigs[activeTab], isEng=activeTab!=='awareness';
+  document.getElementById('m1-label').textContent=cfg.m1Label;
+  document.getElementById('m1-hint').textContent=cfg.m1Hint;
+  document.getElementById('metric1').placeholder=cfg.m1Ph;
+  const m2f=document.getElementById('m2-field');
+  if(cfg.m2){m2f.classList.remove('hidden');document.getElementById('m2-label').textContent=cfg.m2Label;document.getElementById('m2-hint').textContent=cfg.m2Hint;document.getElementById('metric2').placeholder=cfg.m2Ph;}
   else m2f.classList.add('hidden');
-  const isEng = activeTab !== 'awareness';
-  document.getElementById('adv-threshold').placeholder = isEng ? '20' : '30';
-  document.getElementById('adv-inflation').placeholder = isEng ? '300' : '50';
-  document.getElementById('adv-maxreach').placeholder  = isEng ? '75' : '85';
-  document.getElementById('adv-thr-lbl').textContent   = 'Inflation Threshold (%)';
-  document.getElementById('adv-infl-lbl').textContent  = 'Inflation Rate at ' + (isEng ? '40%' : '50%') + ' (%)';
+  document.getElementById('adv-threshold').placeholder=isEng?'20':'30';
+  document.getElementById('adv-inflation').placeholder=isEng?'80':'50';
+  document.getElementById('adv-maxreach').placeholder='85';
+  document.getElementById('adv-thr-lbl').textContent='Inflation Threshold (%)';
+  document.getElementById('adv-infl-lbl').textContent='Inflation Rate at '+(isEng?'40%':'50%')+' (%)';
 }
-function toggleAdv() {
-  showAdv = !showAdv;
-  document.getElementById('adv-body').classList.toggle('hidden', !showAdv);
-  document.getElementById('adv-arrow').textContent = showAdv ? '▼ hide' : '▶ show';
+function toggleAdv(){
+  showAdv=!showAdv;
+  document.getElementById('adv-body').classList.toggle('hidden',!showAdv);
+  document.getElementById('adv-arrow').textContent=showAdv?'▼ hide':'▶ show';
 }
-function toggleTheme() {
-  isDark = !isDark;
-  document.body.className = isDark ? 'dark' : 'light';
-  document.getElementById('theme-icon').textContent = isDark ? '🌙' : '☀️';
-  document.getElementById('theme-txt').textContent  = isDark ? 'Dark' : 'Light';
-  if (lastResult) renderCPMCurve(lastResult);
+function toggleTheme(){
+  isDark=!isDark;
+  document.body.className=isDark?'dark':'light';
+  document.getElementById('theme-icon').textContent=isDark?'🌙':'☀️';
+  document.getElementById('theme-txt').textContent=isDark?'Dark':'Light';
+  if(lastResult)renderCPMCurve(lastResult);
 }
-function copyRec() {
-  const text = document.getElementById('rec-body')?.innerText || '';
-  navigator.clipboard.writeText(text).then(() => {
-    const ok = document.getElementById('rec-copy-ok');
+function copyRec(){
+  const text=document.getElementById('rec-body')?.innerText||'';
+  navigator.clipboard.writeText(text).then(()=>{
+    const ok=document.getElementById('rec-copy-ok');
     ok.classList.remove('hidden');
-    setTimeout(() => ok.classList.add('hidden'), 2000);
+    setTimeout(()=>ok.classList.add('hidden'),2000);
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => { updateTabUI(); calculate(); });
+document.addEventListener('DOMContentLoaded',()=>{updateTabUI();calculate();});
 </script>
 </body>
 </html>
-
-
-
 
