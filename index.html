@@ -328,7 +328,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
           <div class="cl-item"><div class="cl-dot" style="background:rgba(255,193,7,0.5)"></div>Inflation zone</div>
           <div class="cl-item"><div class="cl-dot" style="background:rgba(230,0,35,0.4)"></div>High inflation</div>
           <div class="cl-item"><div class="cl-dot" style="background:var(--orange);border-radius:50%"></div>Actual</div>
-          <div class="cl-item"><div class="cl-dot" style="background:var(--green-light);border-radius:50%"></div>Potential</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--green-light);border-radius:50%"></div>Potential (curve)</div>
         </div>
       </div>
     </div>
@@ -347,8 +347,7 @@ body{background:var(--bg);color:var(--text);min-height:100vh}
         <div class="sn" id="stat-gap-note"></div>
       </div>
       <div class="stat-box">
-        <div class="sl" id="stat-eff-lbl">Eff. Cost at Target</div>
-        <!-- FIX 2: colour changed from var(--orange) → var(--green-light) to match green dot -->
+        <div class="sl" id="stat-eff-lbl">Incr. Eff. Cost</div>
         <div class="sv" id="stat-eff" style="color:var(--green-light)">—</div>
         <div class="sn" id="stat-eff-note"></div>
       </div>
@@ -385,9 +384,9 @@ const tabData = {
 };
 
 const tabConfigs = {
-  awareness:     { m1Label:'💰 Base CPM (€)',     m1Hint:'Cost per 1,000 impressions',     m1Ph:'e.g., 14.50', m2:false, engName:'Impressions', effLabel:'Eff. CPM at Target',  inflPt:50 },
-  video:         { m1Label:'🎬 Base CPCV95% (€)', m1Hint:'Cost per completed view at 95%', m1Ph:'e.g., 0.05',  m2:true,  m2Label:'📊 VTR95% (%)', m2Hint:'View-through rate at 95%', m2Ph:'e.g., 60', engName:'Video Views', effLabel:'Eff. CPCV at Target', inflPt:40 },
-  consideration: { m1Label:'🖱️ Base CPC (€)',     m1Hint:'Cost per click',                 m1Ph:'e.g., 0.45',  m2:true,  m2Label:'📊 CTR (%)',    m2Hint:'Click-through rate',      m2Ph:'e.g., 1.2', engName:'Pin Clicks',  effLabel:'Eff. CPC at Target',  inflPt:40 }
+  awareness:     { m1Label:'💰 Base CPM (€)',     m1Hint:'Cost per 1,000 impressions',     m1Ph:'e.g., 14.50', m2:false, engName:'Impressions', effLabel:'Incr. Eff. CPM',  inflPt:50 },
+  video:         { m1Label:'🎬 Base CPCV95% (€)', m1Hint:'Cost per completed view at 95%', m1Ph:'e.g., 0.05',  m2:true,  m2Label:'📊 VTR95% (%)', m2Hint:'View-through rate at 95%', m2Ph:'e.g., 60', engName:'Video Views', effLabel:'Incr. Eff. CPCV', inflPt:40 },
+  consideration: { m1Label:'🖱️ Base CPC (€)',     m1Hint:'Cost per click',                 m1Ph:'e.g., 0.45',  m2:true,  m2Label:'📊 CTR (%)',    m2Hint:'Click-through rate',      m2Ph:'e.g., 1.2', engName:'Pin Clicks',  effLabel:'Incr. Eff. CPC',  inflPt:40 }
 };
 
 function fNum(n){if(n>=1e9)return(n/1e9).toFixed(1)+'B';if(n>=1e6)return(n/1e6).toFixed(2)+'M';if(n>=1e3)return(n/1e3).toFixed(1)+'K';return Math.round(n).toLocaleString('en-US');}
@@ -404,42 +403,19 @@ function cpmToDisplay(cpm, m2, isEng) {
 }
 
 // ─── COST CURVE ───────────────────────────────────────────────────────────────
-//
-// FIX 1: Curve is now FLAT at baseCPM for pen ≤ threshold.
-//
-// Previous behaviour: the curve used t = pen/inflPt, which produced tiny but
-// non-zero inflation from pen=0 because gentle = t^1.5 > 0 for any t > 0.
-// The threshold only biased the sigmoid blend weight — it was not a hard floor.
-//
-// New behaviour:
-//   • pen ≤ threshold  → return baseCPM exactly (zero inflation)
-//   • pen > threshold  → rescale t = (pen - threshold) / (inflPt - threshold)
-//     so t=0 at threshold and t=1 at inflPt, guaranteeing continuity.
-//   • sigmoid now centred at t=1 (the inflection point on the new scale),
-//     blending gentle (t^1.5) → steep (t^3) smoothly past the inflection.
-//   • At t=1: gentle=1, steep=1 → cost = baseCPM*(1+inflRate/100) ✓
-//   • At t=0: gentle=0, steep=0 → cost = baseCPM ✓ (continuous at threshold)
-//
+// Flat at baseCPM for pen ≤ threshold, then rises continuously from threshold.
+// t is rescaled so t=0 at threshold and t=1 at inflPt → guarantees continuity.
 function getEffectiveCPM(pen, baseCPM, inflRate, threshold, isEng) {
   if (baseCPM <= 0) return baseCPM;
   if (pen <= 0)     return baseCPM;
-
-  // Hard flat floor below threshold — no inflation at all
   if (pen <= threshold) return baseCPM;
 
   const inflPt  = isEng ? 40 : 50;
-
-  // Rescale so t=0 at threshold, t=1 at inflPt
-  // Guard: if threshold >= inflPt, treat entire range as steep
   const tRange  = Math.max(inflPt - threshold, 0.1);
   const t       = (pen - threshold) / tRange;
-
-  // Sigmoid centred at t=1 (inflection point): transitions gentle → steep
   const w       = 1 / (1 + Math.exp(-6 * (t - 1)));
-
-  const gentle  = Math.pow(t, 1.5); // sub-quadratic: gradual climb just above threshold
-  const steep   = Math.pow(t, 3);   // cubic: aggressive well past inflection
-
+  const gentle  = Math.pow(t, 1.5);
+  const steep   = Math.pow(t, 3);
   const blended = (1 - w) * gentle + w * steep;
   return baseCPM * (1 + (inflRate / 100) * blended);
 }
@@ -552,21 +528,40 @@ function calculate() {
   const addEng        = targetExceeded ? 0 : Math.max(0, potEng - actualEng);
   const addImpr       = targetExceeded ? 0 : Math.max(0, potImpr - actualImpr);
 
-  // ── FIX 2: realEffMetric is now the DIRECT curve value at penP ────────────
+  const baseDisplay = cpmToDisplay(baseCPM, m2, isEng);
+
+  // ── FIX: realEffMetric = budgetGap ÷ additional deliveries ───────────────
   //
-  // Previously this was a reality-anchored projection (actual × model ratio),
-  // which diverged from the green dot whenever the campaign ran unusually
-  // efficiently or at low penetration relative to the model.
+  // The previous approach read realEffMetric directly from the theoretical
+  // curve at penP. This contradicted the reality-anchored budgetGap because
+  // the two methods used completely different baselines, causing nonsensical
+  // results (e.g. +212% CPCV for a 1% penetration increment).
   //
-  // Now it is computed identically to how the green dot is drawn:
-  //   getEffectiveCPM(penP, ...) → cpmToDisplay(...)
-  // This guarantees the stat box and the chart always show the same number.
+  // The fix: derive realEffMetric from the same engine as budgetGap:
+  //   CPCV / CPC:  budgetGap ÷ addEng   (€ per completed view or click)
+  //   CPM:         budgetGap × 1000 ÷ addImpr  (€ per 1,000 impressions)
   //
-  const baseDisplay   = cpmToDisplay(baseCPM, m2, isEng);
-  const realEffMetric = cpmToDisplay(getEffectiveCPM(cappedPot, baseCPM, infl, thr, isEng), m2, isEng);
+  // This means both stat boxes now answer the same question:
+  //   "What does it cost in reality to go from penA% to penP%?"
+  //
+  // The green dot on the chart intentionally stays on the theoretical curve —
+  // it is a model visualisation aid showing where on the cost curve penP sits,
+  // not a cost quote. The stat box is the reality-anchored cost quote.
+  //
+  let realEffMetric;
+  if (targetExceeded || budgetGap <= 0) {
+    // No scaling needed or no gap — fall back to base rate
+    realEffMetric = baseDisplay;
+  } else if (isEng) {
+    // CPCV or CPC: cost per engagement unit
+    realEffMetric = addEng > 0 ? budgetGap / addEng : baseDisplay;
+  } else {
+    // CPM: cost per 1,000 impressions
+    realEffMetric = addImpr > 0 ? (budgetGap * 1000) / addImpr : baseDisplay;
+  }
 
   // Inflation % is relative to base rate (market floor entered by user)
-  const realInflPct   = baseDisplay > 0 ? ((realEffMetric / baseDisplay) - 1) * 100 : 0;
+  const realInflPct = baseDisplay > 0 ? ((realEffMetric / baseDisplay) - 1) * 100 : 0;
 
   let safeZone = 'safe', safeLabel = '✅ Safe Zone';
   if (cappedPot >= cfg.inflPt + 10) { safeZone = 'danger'; safeLabel = '⚠️ High Inflation'; }
@@ -671,9 +666,12 @@ function updateCards(r) {
   document.getElementById('stat-gap').textContent      = r.targetExceeded?'€0':(r.budgetGap>0?'+'+fEur(r.budgetGap):'—');
   document.getElementById('stat-gap-note').textContent = r.targetExceeded?'':'reality-anchored';
   document.getElementById('stat-eff-lbl').textContent  = r.cfg.effLabel;
-  // FIX 2: value now matches green dot exactly; inflation % vs base rate
-  document.getElementById('stat-eff').textContent      = fEur(r.realEffMetric,r.decN)+(r.realInflPct>0?' (+'+Math.round(r.realInflPct)+'%)':'');
-  document.getElementById('stat-eff-note').textContent = `base ${r.metricN}: ${fEur(r.baseDisplay,r.decN)}`;
+  // Incremental effective cost: gap budget ÷ additional deliveries, with inflation vs base
+  document.getElementById('stat-eff').textContent      = fEur(r.realEffMetric,r.decN)+(r.realInflPct>0?' (+'+Math.round(r.realInflPct)+'%)':r.realInflPct<-0.5?' ('+Math.round(r.realInflPct)+'%)':'');
+  // Note clarifies this is derived from budgetGap ÷ deliveries, not the curve
+  document.getElementById('stat-eff-note').textContent = r.targetExceeded
+    ? `base ${r.metricN}: ${fEur(r.baseDisplay,r.decN)}`
+    : `gap ÷ ${r.isEng?'views/clicks':'impr'} · base: ${fEur(r.baseDisplay,r.decN)}`;
   document.getElementById('chart-section-title').textContent='📊 Campaign Scale Analysis — '+(activeTab==='awareness'?'Awareness (CPM)':activeTab==='video'?'Video Completion (CPCV95)':'Consideration (CPC)');
 }
 
@@ -775,8 +773,8 @@ function renderCPMCurve(r) {
     if (solidPts.length > 1) {
       const ds = solidPts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ');
       let len = 0;
-      for (let i=1;i<solidPts.length;i++){const dx=tx(solidPts[i].p)-tx(solidPts[i-1].p),dy=ty(solidPts[i].v)-ty(solidPts[i-1].v);len+=Math.sqrt(dx*dx+dy*dy);}
-      len = Math.ceil(len)+10;
+      for(let i=1;i<solidPts.length;i++){const dx=tx(solidPts[i].p)-tx(solidPts[i-1].p),dy=ty(solidPts[i].v)-ty(solidPts[i-1].v);len+=Math.sqrt(dx*dx+dy*dy);}
+      len=Math.ceil(len)+10;
       html += `<path class="curve-path-solid" d="${ds}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="--path-len:${len};animation-duration:${Math.max(0.5,len/400)}s"/>`;
     }
     const dashPts = curvePts.filter(pt => pt.p >= r.penA - 0.1);
@@ -786,13 +784,12 @@ function renderCPMCurve(r) {
     }
   } else {
     const dFull = curvePts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ');
-    let len = 0;
-    for (let i=1;i<curvePts.length;i++){const dx=tx(curvePts[i].p)-tx(curvePts[i-1].p),dy=ty(curvePts[i].v)-ty(curvePts[i-1].v);len+=Math.sqrt(dx*dx+dy*dy);}
+    let len=0;
+    for(let i=1;i<curvePts.length;i++){const dx=tx(curvePts[i].p)-tx(curvePts[i-1].p),dy=ty(curvePts[i].v)-ty(curvePts[i-1].v);len+=Math.sqrt(dx*dx+dy*dy);}
     len=Math.ceil(len)+10;
     html += `<path class="curve-path-solid" d="${dFull}" fill="none" stroke="#E60023" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="--path-len:${len};animation-duration:${Math.max(0.6,len/400)}s"/>`;
   }
 
-  // Hover target
   const hoverD = curvePts.map((pt,i)=>`${i===0?'M':'L'}${tx(pt.p).toFixed(1)},${ty(pt.v).toFixed(1)}`).join(' ');
   html += `<path id="hover-target" d="${hoverD}" fill="none" stroke="transparent" stroke-width="18" style="cursor:crosshair"/>`;
   html += `<g id="crosshair" style="opacity:0;pointer-events:none">
@@ -800,7 +797,7 @@ function renderCPMCurve(r) {
     <circle id="ch-dot" cx="0" cy="0" r="4.5" fill="#E60023" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2"/>
   </g>`;
 
-  // Orange dot: actual
+  // Orange dot: actual penetration on the curve
   if (r.penA > 0 && r.penA <= maxPen) {
     const ax = tx(r.penA);
     const curveV = cpmToDisplay(getEffectiveCPM(r.penA, r.baseCPM, r.infl, r.thr, r.isEng), r.m2, r.isEng);
@@ -809,7 +806,10 @@ function renderCPMCurve(r) {
     html += `<circle class="curve-dot curve-dot-orange" cx="${ax}" cy="${curveY}" r="7" fill="#ff9800" stroke="${dk?'#1e1e1e':'#fff'}" stroke-width="2.5"/>`;
   }
 
-  // Green dot: potential — same formula as stat box (FIX 2 source of truth)
+  // Green dot: potential penetration on the THEORETICAL curve (model visualisation)
+  // Note: this dot shows the theoretical cost curve position at penP.
+  // The stat box "Incr. Eff. Cost" is the reality-anchored figure (budgetGap ÷ deliveries)
+  // and will differ from the curve when actual campaign efficiency diverges from model.
   if (r.penP > 0 && r.penP <= maxPen && Math.abs(r.penP - r.penA) > 0.5) {
     const gx = tx(r.penP);
     const greenV = cpmToDisplay(getEffectiveCPM(r.penP, r.baseCPM, r.infl, r.thr, r.isEng), r.m2, r.isEng);
@@ -832,8 +832,8 @@ function chartMouseMove(evt) {
   const svg  = document.getElementById('cpm-chart');
   if (!svg._tx) return;
   const rect = svg.getBoundingClientRect();
-  const { PL, PR, PT, PB, W, H } = C;
-  const cW   = W - PL - PR, cH = H - PT - PB;
+  const { PL, PR, PT, W } = C;
+  const cW   = W - PL - PR;
   const scaleX = W / rect.width;
   const mouseX = (evt.clientX - rect.left) * scaleX;
   const pen    = Math.max(0, Math.min(_chartR.maxR, ((mouseX - PL) / cW) * _chartR.maxR));
@@ -856,7 +856,7 @@ function chartMouseMove(evt) {
   const metN = _chartR.isEng ? (activeTab==='video'?'CPCV':'CPC') : 'CPM';
   const decN = _chartR.isEng ? 4 : 2;
   const zone = pen <= _chartR.thr ? '🟢 Safe' : pen <= (activeTab!=='awareness'?40:50) ? '🟡 Inflation' : '🔴 High';
-  tt.innerHTML = `<strong>${pen.toFixed(1)}% pen</strong> &nbsp;·&nbsp; ${metN}: <strong>${fEur(dispV,decN)}</strong> &nbsp;·&nbsp; ${zone}`;
+  tt.innerHTML = `<strong>${pen.toFixed(1)}% pen</strong> &nbsp;·&nbsp; ${metN} (model): <strong>${fEur(dispV,decN)}</strong> &nbsp;·&nbsp; ${zone}`;
   tt.style.left = (evt.clientX+14)+'px';
   tt.style.top  = (evt.clientY-10)+'px';
   tt.classList.add('visible');
@@ -881,15 +881,15 @@ function updateRec(r) {
   const diff = Math.abs(r.modelVsRealityPct);
   if (diff >= 10) {
     const dir = r.modelVsRealityPct < 0 ? 'more efficiently' : 'at higher cost';
-    html += `<div class="rec-highlight blue">📍 <strong>Reality anchor applied:</strong> The campaign ran <strong>${Math.round(diff)}% ${dir} than modelled</strong> at ${fPct(r.penA)} penetration (actual avg ${r.metricN}: ${fEur(r.actualAvgMetric,r.decN)} vs model: ${fEur(r.theorMetricAtPenA,r.decN)}). The effective ${r.metricN} at target is read directly from the curve at ${fPct(r.penP)}.</div>`;
+    html += `<div class="rec-highlight blue">📍 <strong>Reality anchor applied:</strong> The campaign ran <strong>${Math.round(diff)}% ${dir} than modelled</strong> at ${fPct(r.penA)} penetration (actual avg ${r.metricN}: ${fEur(r.actualAvgMetric,r.decN)} vs model: ${fEur(r.theorMetricAtPenA,r.decN)}). The incremental effective ${r.metricN} is derived from the reality-anchored budget gap divided by the additional ${engN} delivered.</div>`;
   }
 
   if (r.targetExceeded) {
     html += `<div class="rec-highlight green">✅ This campaign already met or exceeded the defined penetration potential of <strong>${fPct(r.penP)}</strong>. With <strong>${fPct(r.penA)}</strong> penetration achieved, no additional budget was needed.</div>`;
     html += `<p><strong>Recommendation for the next campaign flight:</strong> Consider raising the penetration potential target above <strong>${fPct(r.penA)}</strong> to identify new scaling headroom, or maintain the same parameters to deliver consistent audience reach.</p>`;
   } else {
-    html += `<div class="rec-highlight">The scaling curve shows the ${r.metricN} at <strong>${fPct(r.penP)}</strong> penetration is <strong>${effStr}</strong> — read directly from the curve (green dot). The base ${r.metricN} stays flat at <strong>${fEur(r.baseDisplay,r.decN)}</strong> until the inflation threshold at ${fPct(r.thr)}.</div>`;
-    html += `<p>Scaling from <strong>${fPct(r.penA)}</strong> to <strong>${fPct(r.penP)}</strong> within this campaign would have required an additional <strong>${fEur(r.budgetGap)}</strong> — bringing total spend to <strong>${fEur(r.totalIfScaled)}</strong>. This would have delivered an additional <strong>${fNum(r.addUsers)} users</strong> and <strong>+${fNum(r.isEng?r.addEng:r.addImpr)} ${engN}</strong>.</p>`;
+    html += `<div class="rec-highlight">Scaling from <strong>${fPct(r.penA)}</strong> to <strong>${fPct(r.penP)}</strong> requires an incremental budget of <strong>${fEur(r.budgetGap)}</strong>, delivering <strong>+${fNum(r.isEng?r.addEng:r.addImpr)} ${engN}</strong>. Dividing these gives an incremental effective ${r.metricN} of <strong>${effStr}</strong> — a figure consistent with the budget gap, not a theoretical curve reading.</div>`;
+    html += `<p>Scaling within this campaign would have brought total spend to <strong>${fEur(r.totalIfScaled)}</strong>, reaching an additional <strong>${fNum(r.addUsers)} users</strong>. The green dot on the scaling curve shows the theoretical cost model position at ${fPct(r.penP)} for reference.</p>`;
     html += `<p><strong>Recommendation for the next campaign flight:</strong> Plan a full future campaign with a budget of <strong>${fEur(r.budgetNeeded)}</strong> targeting <strong>${fPct(r.penP)} audience penetration</strong> at ${r.freq}× weekly frequency over ${r.weeks} weeks. This keeps the campaign within a ${r.safeZone==='safe'?'cost-efficient safe zone':r.safeZone==='warn'?'moderate inflation zone':'elevated but manageable cost range'} and maximises ${tab==='awareness'?'brand awareness reach':tab==='video'?'video completion impact':'qualified consideration traffic'}.</p>`;
   }
   document.getElementById('rec-body').innerHTML = html;
